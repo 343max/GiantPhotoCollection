@@ -9,11 +9,6 @@
 import UIKit
 import Photos
 
-func build<T>(object: T, block: (object: T) -> ()) -> T {
-    block(object: object)
-    return object
-}
-
 class PhotoCollectionViewController: UICollectionViewController {
     let fetchResult: PHFetchResult
     let imageManager: PHCachingImageManager
