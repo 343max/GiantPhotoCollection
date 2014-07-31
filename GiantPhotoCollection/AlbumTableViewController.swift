@@ -7,11 +7,14 @@
 //
 
 import UIKit
+import Photos
 
 class AlbumTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.title = "Photos"
         
         self.tableView.registerClass(UITableViewCell.classForCoder(), forCellReuseIdentifier: "Cell")
     }
@@ -29,5 +32,13 @@ class AlbumTableViewController: UITableViewController {
         cell.textLabel.text = "All Photos"
         cell.accessoryType = .DisclosureIndicator
         return cell
+    }
+    
+    override func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+        
+        let viewController = PhotoCollectionViewController(fetchOptions: fetchOptions, title: "All Photos")
+        self.navigationController.pushViewController(viewController, animated: true)
     }
 }

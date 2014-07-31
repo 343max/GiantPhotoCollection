@@ -7,11 +7,15 @@
 //
 
 import UIKit
+import Photos
 
 class PhotoCollectionViewController: UICollectionViewController {
+    let fetchOptions: PHFetchOptions
     
-    init() {
+    init(fetchOptions: PHFetchOptions, title: String) {
+        self.fetchOptions = fetchOptions
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        self.title = title
     }
 
 }
