@@ -37,8 +37,9 @@ class AlbumTableViewController: UITableViewController {
     override func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+        let fetchResult = PHAsset.fetchAssetsWithOptions(fetchOptions)
         
-        let viewController = PhotoCollectionViewController(fetchOptions: fetchOptions, title: "All Photos")
+        let viewController = PhotoCollectionViewController(fetchResult: fetchResult, title: "All Photos")
         self.navigationController.pushViewController(viewController, animated: true)
     }
 }

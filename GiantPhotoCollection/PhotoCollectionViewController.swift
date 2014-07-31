@@ -10,10 +10,10 @@ import UIKit
 import Photos
 
 class PhotoCollectionViewController: UICollectionViewController {
-    let fetchOptions: PHFetchOptions
+    let fetchResult: PHFetchResult
     
-    init(fetchOptions: PHFetchOptions, title: String) {
-        self.fetchOptions = fetchOptions
+    init(fetchResult: PHFetchResult, title: String) {
+        self.fetchResult = fetchResult
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
         self.title = title
     }
