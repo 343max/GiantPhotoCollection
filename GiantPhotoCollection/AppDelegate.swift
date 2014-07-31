@@ -20,9 +20,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = build(UINavigationController(rootViewController: albumTableViewController)) {
             $0.navigationBar.barStyle = UIBarStyle.Black
         }
-        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        self.window!.rootViewController = navigationController
-        self.window!.makeKeyAndVisible()
+        
+        self.window = build(UIWindow(frame: UIScreen.mainScreen().bounds)) {
+            $0.rootViewController = navigationController
+            $0.makeKeyAndVisible()
+        }
         
         return true
     }
