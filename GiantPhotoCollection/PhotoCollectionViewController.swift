@@ -71,17 +71,13 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     override func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as PhotoCell
-        cell.indexPath = indexPath
 
         self.imageManager.requestImageForAsset(self.fetchResult[indexPath.row] as PHAsset,
             targetSize: self.flowLayout.itemSize,
             contentMode: PHImageContentMode.AspectFill,
             options: nil,
             resultHandler: { (image: UIImage!, info: [NSObject : AnyObject]!) in
-                if (indexPath == cell.indexPath) {
-                    println("indexPath: \(indexPath) image:\(image)")
-                    cell.imageView.image = image
-                }
+                cell.imageView.image = image
             })
         
         return cell

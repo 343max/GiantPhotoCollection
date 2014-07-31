@@ -10,7 +10,6 @@ import UIKit
 
 class PhotoCell: UICollectionViewCell {
     let imageView: UIImageView
-    var indexPath: NSIndexPath?
     
     init(frame: CGRect) {
         self.imageView = UIImageView(frame: CGRect(origin: CGPointZero, size: frame.size))
