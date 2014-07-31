@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		501F7E15198AB082003DE0F3 /* PhotoCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */; };
 		5041E731198AABB800AE7E94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E730198AABB800AE7E94 /* AppDelegate.swift */; };
-		5041E733198AABB800AE7E94 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E732198AABB800AE7E94 /* ViewController.swift */; };
-		5041E736198AABB800AE7E94 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5041E734198AABB800AE7E94 /* Main.storyboard */; };
 		5041E738198AABB800AE7E94 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5041E737198AABB800AE7E94 /* Images.xcassets */; };
 		5041E744198AABB800AE7E94 /* GiantPhotoCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E743198AABB800AE7E94 /* GiantPhotoCollectionTests.swift */; };
 /* End PBXBuildFile section */
@@ -25,11 +24,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewController.swift; sourceTree = "<group>"; };
 		5041E72B198AABB800AE7E94 /* GiantPhotoCollection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GiantPhotoCollection.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5041E72F198AABB800AE7E94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5041E730198AABB800AE7E94 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5041E732198AABB800AE7E94 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		5041E735198AABB800AE7E94 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5041E737198AABB800AE7E94 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5041E73D198AABB800AE7E94 /* GiantPhotoCollectionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GiantPhotoCollectionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5041E742198AABB800AE7E94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -76,10 +74,9 @@
 			isa = PBXGroup;
 			children = (
 				5041E730198AABB800AE7E94 /* AppDelegate.swift */,
-				5041E732198AABB800AE7E94 /* ViewController.swift */,
-				5041E734198AABB800AE7E94 /* Main.storyboard */,
 				5041E737198AABB800AE7E94 /* Images.xcassets */,
 				5041E72E198AABB800AE7E94 /* Supporting Files */,
+				501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */,
 			);
 			path = GiantPhotoCollection;
 			sourceTree = "<group>";
@@ -189,7 +186,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5041E736198AABB800AE7E94 /* Main.storyboard in Resources */,
 				5041E738198AABB800AE7E94 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -208,8 +204,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5041E733198AABB800AE7E94 /* ViewController.swift in Sources */,
 				5041E731198AABB800AE7E94 /* AppDelegate.swift in Sources */,
+				501F7E15198AB082003DE0F3 /* PhotoCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,17 +226,6 @@
 			targetProxy = 5041E73E198AABB800AE7E94 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		5041E734198AABB800AE7E94 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5041E735198AABB800AE7E94 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		5041E745198AABB800AE7E94 /* Debug */ = {
@@ -395,6 +380,7 @@
 				5041E749198AABB800AE7E94 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5041E74A198AABB800AE7E94 /* Build configuration list for PBXNativeTarget "GiantPhotoCollectionTests" */ = {
 			isa = XCConfigurationList;
@@ -403,6 +389,7 @@
 				5041E74C198AABB800AE7E94 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
