@@ -16,7 +16,11 @@ class AlbumTableViewController: UITableViewController {
         
         self.title = "Photos"
         
-        self.tableView.registerClass(UITableViewCell.classForCoder(), forCellReuseIdentifier: "Cell")
+        build(self.tableView) {
+            $0.registerClass(UITableViewCell.classForCoder(), forCellReuseIdentifier: "Cell")
+            $0.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
+            $0.separatorColor = UIColor(white: 1.0, alpha: 0.1)
+        }
     }
     
     override func numberOfSectionsInTableView(tableView: UITableView!) -> Int {
@@ -28,10 +32,12 @@ class AlbumTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as UITableViewCell
-        cell.textLabel.text = "All Photos"
-        cell.accessoryType = .DisclosureIndicator
-        return cell
+        return build(tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as UITableViewCell) {
+            $0.textLabel.text = "All Photos"
+            $0.textLabel.textColor = UIColor.whiteColor()
+            $0.accessoryType = .DisclosureIndicator
+            $0.backgroundColor = self.tableView.backgroundColor
+        }
     }
     
     override func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {

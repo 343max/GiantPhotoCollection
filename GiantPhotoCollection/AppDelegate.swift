@@ -17,7 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication!, didFinishLaunchingWithOptions launchOptions: NSDictionary!) -> Bool {
         
         let albumTableViewController = AlbumTableViewController(style: UITableViewStyle.Plain)
-        let navigationController = UINavigationController(rootViewController: albumTableViewController)
+        let navigationController = build(UINavigationController(rootViewController: albumTableViewController)) {
+            $0.navigationBar.barStyle = UIBarStyle.Black
+        }
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         self.window!.rootViewController = navigationController
         self.window!.makeKeyAndVisible()

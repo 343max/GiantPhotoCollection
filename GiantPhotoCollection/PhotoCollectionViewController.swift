@@ -52,7 +52,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.collectionView.backgroundColor = UIColor.whiteColor()
+        self.collectionView.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
         self.collectionView.registerClass(PhotoCell.classForCoder(), forCellWithReuseIdentifier: photoCellReuseIdentifier)
     }
     
