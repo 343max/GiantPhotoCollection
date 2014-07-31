@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		501F7E15198AB082003DE0F3 /* PhotoCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */; };
+		501F7E17198AB553003DE0F3 /* AlbumTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501F7E16198AB553003DE0F3 /* AlbumTableViewController.swift */; };
 		5041E731198AABB800AE7E94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E730198AABB800AE7E94 /* AppDelegate.swift */; };
 		5041E738198AABB800AE7E94 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5041E737198AABB800AE7E94 /* Images.xcassets */; };
 		5041E744198AABB800AE7E94 /* GiantPhotoCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E743198AABB800AE7E94 /* GiantPhotoCollectionTests.swift */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewController.swift; sourceTree = "<group>"; };
+		501F7E16198AB553003DE0F3 /* AlbumTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumTableViewController.swift; sourceTree = "<group>"; };
 		5041E72B198AABB800AE7E94 /* GiantPhotoCollection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GiantPhotoCollection.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5041E72F198AABB800AE7E94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5041E730198AABB800AE7E94 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				5041E737198AABB800AE7E94 /* Images.xcassets */,
 				5041E72E198AABB800AE7E94 /* Supporting Files */,
 				501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */,
+				501F7E16198AB553003DE0F3 /* AlbumTableViewController.swift */,
 			);
 			path = GiantPhotoCollection;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5041E731198AABB800AE7E94 /* AppDelegate.swift in Sources */,
+				501F7E17198AB553003DE0F3 /* AlbumTableViewController.swift in Sources */,
 				501F7E15198AB082003DE0F3 /* PhotoCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

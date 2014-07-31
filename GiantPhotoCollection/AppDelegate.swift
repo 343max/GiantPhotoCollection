@@ -16,8 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication!, didFinishLaunchingWithOptions launchOptions: NSDictionary!) -> Bool {
         
-        let photoCollectionViewController = PhotoCollectionViewController()
-        let navigationController = UINavigationController(rootViewController: photoCollectionViewController)
+        let albumTableViewController = AlbumTableViewController(style: UITableViewStyle.Plain)
+        let navigationController = UINavigationController(rootViewController: albumTableViewController)
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         self.window!.rootViewController = navigationController
         self.window!.makeKeyAndVisible()
