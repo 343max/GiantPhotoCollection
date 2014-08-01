@@ -15,6 +15,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
     let assetsPerCell: Int = 128
+    let imageRenderingQueue: dispatch_queue_t
 
     init(fetchResult: PHFetchResult, title: String) {
         self.fetchResult = fetchResult
@@ -26,6 +27,7 @@ class PhotoCollectionViewController: UICollectionViewController {
         }
         
         self.imageManager = PHCachingImageManager()
+        self.imageRenderingQueue = dispatch_queue_create("de.343max.imageRenderingQueue", nil)
 
         super.init(collectionViewLayout: self.flowLayout)
         self.title = title
@@ -66,6 +68,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     override func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
         return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell) {
+            $0.queue = self.imageRenderingQueue
             $0.imageManager = self.imageManager
             $0.assets = self.assetsForIndexPath(indexPath)
         }

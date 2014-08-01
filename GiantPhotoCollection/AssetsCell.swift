@@ -19,16 +19,18 @@ class AssetsCell: UICollectionViewCell {
     }
     }
     var imageManager: PHCachingImageManager?
+    var queue: dispatch_queue_t?
+    var imageRequestId: PHImageRequestID?
     
     var assets: [PHAsset]? {
     willSet {
         if let assets = self.assets {
-            self.stopLoadingAssets(assets)
+//            self.stopLoadingAssets(assets)
         }
     }
     didSet {
         if let assets = self.assets {
-            self.startLoadingAssets(assets)
+//            self.startLoadingAssets(assets)
             self.loadImages(assets)
         }
     }
@@ -44,6 +46,9 @@ class AssetsCell: UICollectionViewCell {
     override func prepareForReuse() {
         self.imageView.image = nil
         self.assets = nil
+        if let imageRequestId = self.imageRequestId {
+            self.imageManager!.cancelImageRequest(imageRequestId)
+        }
     }
     
     func stopLoadingAssets(assets: [PHAsset]) {
@@ -69,30 +74,35 @@ class AssetsCell: UICollectionViewCell {
             let column: CGFloat = CGFloat(CGFloat(i) % assetsPerRow)
             let row: CGFloat = CGFloat(CGFloat(CGFloat(i) - CGFloat(column)) / CGFloat(assetsPerRow))
             let frame = CGRect(origin: CGPoint(x: column * self.imageSize.width, y: row * self.imageSize.height), size: self.imageSize)
-            println("imageSize: \(images[i]!.size)")
             images[i]!.drawInRect(frame)
         }
         
-        self.imageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        let image = UIGraphicsGetImageFromCurrentImageContext()
         
         UIGraphicsEndImageContext()
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.imageView.image = image
+        }
     }
     
     func loadImages(assets: [PHAsset]) {
-        var images: [Int: UIImage] = [:]
-        var imagesLoaded = 0
-        
-        for i in 0 ..< assets.count {
-            self.imageManager!.requestImageForAsset(assets[i],
-                targetSize: self.targetSize,
-                contentMode: self.imageContentMode,
-                options: nil, resultHandler: { (image, info) in
-                    images[i] = image
-                    imagesLoaded++
-                    if (imagesLoaded == assets.count) {
-                        self.createWallpaperImage(images)
-                    }
-                })
+        dispatch_async(self.queue) {
+            var images: [Int: UIImage] = [:]
+            var imagesLoaded = 0
+            
+            for i in 0 ..< assets.count {
+                self.imageRequestId = self.imageManager!.requestImageForAsset(assets[i],
+                    targetSize: self.targetSize,
+                    contentMode: self.imageContentMode,
+                    options: nil, resultHandler: { (image, info) in
+                        images[i] = image
+                        imagesLoaded++
+                        if (imagesLoaded == assets.count) {
+                            self.createWallpaperImage(images)
+                        }
+                    })
+            }
         }
     }
 }
