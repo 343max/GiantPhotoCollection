@@ -45,7 +45,13 @@ class WallpaperManager {
 
         dispatch_async(self.queue) {
             let assets = self.assets(range: self.rangeForAssets(wallpaperIndex: wallpaperIndex))
-            self.loadImages(assets, wallpaperIndex: wallpaperIndex, callback: callback)
+            let images = self.loadImages(assets)
+            let wallpaperImage = self.drawWallpaper(images)
+            self.cache.setObject(wallpaperImage, forKey: wallpaperIndex)
+            dispatch_async(dispatch_get_main_queue()) {
+                callback(image: wallpaperImage, index: wallpaperIndex)
+            }
+
         }
     }
     
@@ -63,7 +69,7 @@ class WallpaperManager {
         return assets
     }
     
-    private func loadImages(assets: [PHAsset], wallpaperIndex: Int, callback: CreatedWallpaperImageCallback) {
+    private func loadImages(assets: [PHAsset]) -> [Int:UIImage] {
         var images = [Int: UIImage]()
         
         for i in 0..<assets.count {
@@ -72,20 +78,17 @@ class WallpaperManager {
                 contentMode: PHImageContentMode.AspectFill,
                 options: build(PHImageRequestOptions()) {
                     $0.deliveryMode = PHImageRequestOptionsDeliveryMode.FastFormat
+                    $0.synchronous = true
                 },
                 resultHandler: { (image, info) in
-                    println(i)
                     images[i] = image
-                    if (images.count == assets.count) {
-                        dispatch_async(self.queue) {
-                            self.drawWallpaper(images, wallpaperIndex: wallpaperIndex, callback: callback)
-                        }
-                    }
                 })
         }
+        
+        return images;
     }
     
-    private func drawWallpaper(images: [Int: UIImage], wallpaperIndex: Int, callback: CreatedWallpaperImageCallback) {
+    private func drawWallpaper(images: [Int: UIImage]) -> UIImage {
         
         UIGraphicsBeginImageContextWithOptions(self.wallpaperImageSize, false, 2.0)
         
@@ -100,9 +103,6 @@ class WallpaperManager {
         
         UIGraphicsEndImageContext()
         
-        dispatch_async(dispatch_get_main_queue()) {
-            self.cache.setObject(image, forKey: wallpaperIndex)
-            callback(image: image, index: wallpaperIndex)
-        }
+        return image
     }
 }
