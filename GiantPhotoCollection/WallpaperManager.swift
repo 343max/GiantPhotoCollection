@@ -38,6 +38,11 @@ class WallpaperManager {
     }
     
     func createImageForWallpaper(#wallpaperIndex: Int, callback: CreatedWallpaperImageCallback) {
+        if let image: UIImage = self.cache.objectForKey(wallpaperIndex) as? UIImage {
+            callback(image: image, index: wallpaperIndex)
+            return
+        }
+
         dispatch_async(self.queue) {
             let assets = self.assets(range: self.rangeForAssets(wallpaperIndex: wallpaperIndex))
             self.loadImages(assets, wallpaperIndex: wallpaperIndex, callback: callback)
@@ -93,6 +98,7 @@ class WallpaperManager {
         UIGraphicsEndImageContext()
         
         dispatch_async(dispatch_get_main_queue()) {
+            self.cache.setObject(image, forKey: wallpaperIndex)
             callback(image: image, index: wallpaperIndex)
         }
     }
