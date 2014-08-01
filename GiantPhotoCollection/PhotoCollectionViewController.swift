@@ -19,14 +19,14 @@ class PhotoCollectionViewController: UICollectionViewController {
         self.fetchResult = fetchResult
         
         self.flowLayout = build(UICollectionViewFlowLayout()) {
-            $0.itemSize = CGSize(width: 320, height: 128)
+            $0.itemSize = CGSize(width: 320, height: 80)
             $0.minimumInteritemSpacing = 0.0
             $0.minimumLineSpacing = 0.0
         }
         
         self.wallpaperManager = WallpaperManager(fetchResult: self.fetchResult,
             wallpaperImageSize: self.flowLayout.itemSize,
-            thumbnailSize: CGSize(width: 32, height: 32))
+            thumbnailSize: CGSize(width: 20, height: 20))
 
         super.init(collectionViewLayout: self.flowLayout)
         self.title = title
