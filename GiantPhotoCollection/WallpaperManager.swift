@@ -70,8 +70,11 @@ class WallpaperManager {
             self.imageManager.requestImageForAsset(assets[i],
                 targetSize: self.thumbnailSize,
                 contentMode: PHImageContentMode.AspectFill,
-                options: nil,
+                options: build(PHImageRequestOptions()) {
+                    $0.deliveryMode = PHImageRequestOptionsDeliveryMode.FastFormat
+                },
                 resultHandler: { (image, info) in
+                    println(i)
                     images[i] = image
                     if (images.count == assets.count) {
                         dispatch_async(self.queue) {
