@@ -14,12 +14,13 @@ class PhotoCollectionViewController: UICollectionViewController {
     let imageManager: PHCachingImageManager
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
-    
+    let assetsPerCell: Int = 128
+
     init(fetchResult: PHFetchResult, title: String) {
         self.fetchResult = fetchResult
         
         self.flowLayout = build(UICollectionViewFlowLayout()) {
-            $0.itemSize = CGSize(width: 80, height: 80)
+            $0.itemSize = CGSize(width: 320, height: 160)
             $0.minimumInteritemSpacing = 0.0
             $0.minimumLineSpacing = 0.0
         }
@@ -34,15 +35,14 @@ class PhotoCollectionViewController: UICollectionViewController {
         self.imageManager.stopCachingImagesForAllAssets()
     }
     
-    func updateCachedAssets() {
-        let indexPaths = self.collectionView.indexPathsForVisibleItems() as [NSIndexPath]
-        let assets = indexPaths.map { (let indexPath) -> PHAsset in
-            return self.fetchResult[indexPath.row] as PHAsset
+    func assetsForIndexPath(indexPath: NSIndexPath) -> [PHAsset] {
+        let loc = indexPath.row * self.assetsPerCell
+        let end = loc + self.assetsPerCell
+        var assets: [PHAsset] = []
+        for i in loc...end {
+            assets += self.fetchResult[i] as PHAsset
         }
-        self.imageManager.startCachingImagesForAssets(assets,
-            targetSize: self.flowLayout.itemSize,
-            contentMode: PHImageContentMode.AspectFill,
-            options: nil)
+        return assets
     }
     
     override func viewDidLoad() {
@@ -53,7 +53,6 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        self.updateCachedAssets()
     }
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
@@ -61,26 +60,14 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
-        return fetchResult.count
+        // TODO: don't cut off any images
+        return Int(floor(Double(fetchResult.count) / Double(self.assetsPerCell)))
     }
     
     override func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell
-
-        self.imageManager.requestImageForAsset(self.fetchResult[indexPath.row] as PHAsset,
-            targetSize: self.flowLayout.itemSize,
-            contentMode: PHImageContentMode.AspectFill,
-            options: nil,
-            resultHandler: { (image: UIImage!, info: [NSObject : AnyObject]!) in
-                cell.imageView.image = image
-            })
-        
-        return cell
+        return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell) {
+            $0.imageManager = self.imageManager
+            $0.assets = self.assetsForIndexPath(indexPath)
+        }
     }
-    
-    
-    override func scrollViewDidScroll(scrollView: UIScrollView!)  {
-        self.updateCachedAssets()
-    }
-    
 }
