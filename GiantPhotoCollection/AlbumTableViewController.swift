@@ -20,6 +20,7 @@ class AlbumTableViewController: UITableViewController {
             $0.registerClass(UITableViewCell.classForCoder(), forCellReuseIdentifier: "Cell")
             $0.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
             $0.separatorColor = UIColor(white: 1.0, alpha: 0.1)
+            $0.indicatorStyle = .White
         }
     }
     

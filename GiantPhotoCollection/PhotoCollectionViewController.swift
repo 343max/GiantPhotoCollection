@@ -34,8 +34,11 @@ class PhotoCollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.collectionView.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
-        self.collectionView.registerClass(AssetsCell.classForCoder(), forCellWithReuseIdentifier: photoCellReuseIdentifier)
+        build(self.collectionView) {
+            $0.indicatorStyle = .White
+            $0.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
+            $0.registerClass(AssetsCell.classForCoder(), forCellWithReuseIdentifier: self.photoCellReuseIdentifier)
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
