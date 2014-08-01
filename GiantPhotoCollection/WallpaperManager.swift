@@ -10,13 +10,14 @@ import UIKit
 import Photos
 
 class WallpaperManager {
-    typealias CreatedWallpaperImageCallback = (image: UIImage) -> ()
+    typealias CreatedWallpaperImageCallback = (image: UIImage, index: Int) -> ()
     
     let wallpaperImageSize: CGSize
     let thumbnailSize: CGSize
     let imageManager: PHImageManager
     let queue: dispatch_queue_t
     let fetchResult: PHFetchResult
+    let cache: NSCache
     
     let thumbsPerRow: Int
     let thumbsPerWallpaper: Int
@@ -26,8 +27,9 @@ class WallpaperManager {
         self.fetchResult = fetchResult
         self.wallpaperImageSize = wallpaperImageSize
         self.thumbnailSize = thumbnailSize
-        self.queue = dispatch_queue_create("de.343max.wallpaperManagerWorker", nil)
+        self.queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
         self.imageManager = PHImageManager()
+        self.cache = NSCache()
         
         self.thumbsPerRow = Int(floor(wallpaperImageSize.width / thumbnailSize.width))
         self.thumbsPerWallpaper = Int(floor(wallpaperImageSize.height / thumbnailSize.height)) * self.thumbsPerRow
@@ -36,8 +38,10 @@ class WallpaperManager {
     }
     
     func createImageForWallpaper(#wallpaperIndex: Int, callback: CreatedWallpaperImageCallback) {
-        let assets = self.assets(range: self.rangeForAssets(wallpaperIndex: wallpaperIndex))
-        self.loadImages(assets, callback: callback)
+        dispatch_async(self.queue) {
+            let assets = self.assets(range: self.rangeForAssets(wallpaperIndex: wallpaperIndex))
+            self.loadImages(assets, wallpaperIndex: wallpaperIndex, callback: callback)
+        }
     }
     
     private func rangeForAssets(#wallpaperIndex: Int) -> Range<Int> {
@@ -54,7 +58,7 @@ class WallpaperManager {
         return assets
     }
     
-    private func loadImages(assets: [PHAsset], callback: CreatedWallpaperImageCallback) {
+    private func loadImages(assets: [PHAsset], wallpaperIndex: Int, callback: CreatedWallpaperImageCallback) {
         var images = [Int: UIImage]()
         
         for i in 0..<assets.count {
@@ -65,13 +69,15 @@ class WallpaperManager {
                 resultHandler: { (image, info) in
                     images[i] = image
                     if (images.count == assets.count) {
-                        self.drawWallpaper(images, callback: callback)
+                        dispatch_async(self.queue) {
+                            self.drawWallpaper(images, wallpaperIndex: wallpaperIndex, callback: callback)
+                        }
                     }
                 })
         }
     }
     
-    private func drawWallpaper(images: [Int: UIImage], callback: CreatedWallpaperImageCallback) {
+    private func drawWallpaper(images: [Int: UIImage], wallpaperIndex: Int, callback: CreatedWallpaperImageCallback) {
         
         UIGraphicsBeginImageContextWithOptions(self.wallpaperImageSize, false, 2.0)
         
@@ -86,6 +92,8 @@ class WallpaperManager {
         
         UIGraphicsEndImageContext()
         
-        callback(image: image)
+        dispatch_async(dispatch_get_main_queue()) {
+            callback(image: image, index: wallpaperIndex)
+        }
     }
 }

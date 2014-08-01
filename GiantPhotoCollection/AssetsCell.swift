@@ -16,7 +16,11 @@ class AssetsCell: UICollectionViewCell {
     didSet {
         if let wallpaperIndex = self.wallpaperIndex {
             self.wallpaperManager!.createImageForWallpaper(wallpaperIndex: wallpaperIndex,
-                callback: { (image) in
+                callback: { (image, index) in
+                    if (index != self.wallpaperIndex) {
+                        return
+                    }
+                    
                     self.imageView.image = image
                 })
         }
