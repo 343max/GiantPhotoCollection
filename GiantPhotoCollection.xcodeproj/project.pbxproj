@@ -12,6 +12,7 @@
 		5041E731198AABB800AE7E94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E730198AABB800AE7E94 /* AppDelegate.swift */; };
 		5041E738198AABB800AE7E94 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5041E737198AABB800AE7E94 /* Images.xcassets */; };
 		5041E744198AABB800AE7E94 /* GiantPhotoCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E743198AABB800AE7E94 /* GiantPhotoCollectionTests.swift */; };
+		50745017198BF70800951657 /* WallpaperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50745016198BF70800951657 /* WallpaperManager.swift */; };
 		50F91558198AD49E001CED70 /* AssetsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F91557198AD49E001CED70 /* AssetsCell.swift */; };
 		50F9155A198AF28F001CED70 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F91559198AF28F001CED70 /* Helper.swift */; };
 /* End PBXBuildFile section */
@@ -36,6 +37,7 @@
 		5041E73D198AABB800AE7E94 /* GiantPhotoCollectionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GiantPhotoCollectionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5041E742198AABB800AE7E94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5041E743198AABB800AE7E94 /* GiantPhotoCollectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiantPhotoCollectionTests.swift; sourceTree = "<group>"; };
+		50745016198BF70800951657 /* WallpaperManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WallpaperManager.swift; sourceTree = "<group>"; };
 		50F91557198AD49E001CED70 /* AssetsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetsCell.swift; sourceTree = "<group>"; };
 		50F91559198AF28F001CED70 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -86,6 +88,7 @@
 				501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */,
 				501F7E16198AB553003DE0F3 /* AlbumTableViewController.swift */,
 				50F91559198AF28F001CED70 /* Helper.swift */,
+				50745016198BF70800951657 /* WallpaperManager.swift */,
 			);
 			path = GiantPhotoCollection;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				5041E731198AABB800AE7E94 /* AppDelegate.swift in Sources */,
 				50F9155A198AF28F001CED70 /* Helper.swift in Sources */,
 				501F7E17198AB553003DE0F3 /* AlbumTableViewController.swift in Sources */,
+				50745017198BF70800951657 /* WallpaperManager.swift in Sources */,
 				501F7E15198AB082003DE0F3 /* PhotoCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

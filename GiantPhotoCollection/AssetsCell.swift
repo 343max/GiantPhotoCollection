@@ -11,27 +11,14 @@ import Photos
 
 class AssetsCell: UICollectionViewCell {
     let imageView: UIImageView
-    let imageContentMode = PHImageContentMode.AspectFill
-    var imageSize = CGSize(width: 20, height: 20)
-    var targetSize: CGSize {
-    get {
-        return CGSize(width: self.imageSize.width * 2.0, height: self.imageSize.height * 2.0)
-    }
-    }
-    var imageManager: PHCachingImageManager?
-    var queue: dispatch_queue_t?
-    var imageRequestId: PHImageRequestID?
-    
-    var assets: [PHAsset]? {
-    willSet {
-        if let assets = self.assets {
-//            self.stopLoadingAssets(assets)
-        }
-    }
+    var wallpaperManager: WallpaperManager?
+    var wallpaperIndex: Int? {
     didSet {
-        if let assets = self.assets {
-//            self.startLoadingAssets(assets)
-            self.loadImages(assets)
+        if let wallpaperIndex = self.wallpaperIndex {
+            self.wallpaperManager!.createImageForWallpaper(wallpaperIndex: wallpaperIndex,
+                callback: { (image) in
+                    self.imageView.image = image
+                })
         }
     }
     }
@@ -45,64 +32,5 @@ class AssetsCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         self.imageView.image = nil
-        self.assets = nil
-        if let imageRequestId = self.imageRequestId {
-            self.imageManager!.cancelImageRequest(imageRequestId)
-        }
-    }
-    
-    func stopLoadingAssets(assets: [PHAsset]) {
-        self.imageManager!.stopCachingImagesForAssets(assets,
-            targetSize: self.targetSize,
-            contentMode: self.imageContentMode,
-            options: nil)
-    }
-    
-    func startLoadingAssets(assets: [PHAsset]) {
-        self.imageManager!.startCachingImagesForAssets(assets,
-            targetSize: self.targetSize,
-            contentMode: self.imageContentMode,
-            options: nil)
-    }
-    
-    func createWallpaperImage(images: [Int: UIImage]) {
-        let assetsPerRow = CGFloat(self.bounds.width / self.imageSize.width)
-        
-        UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, 2.0)
-        
-        for i in images.keys {
-            let column: CGFloat = CGFloat(CGFloat(i) % assetsPerRow)
-            let row: CGFloat = CGFloat(CGFloat(CGFloat(i) - CGFloat(column)) / CGFloat(assetsPerRow))
-            let frame = CGRect(origin: CGPoint(x: column * self.imageSize.width, y: row * self.imageSize.height), size: self.imageSize)
-            images[i]!.drawInRect(frame)
-        }
-        
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        
-        UIGraphicsEndImageContext()
-        
-        dispatch_async(dispatch_get_main_queue()) {
-            self.imageView.image = image
-        }
-    }
-    
-    func loadImages(assets: [PHAsset]) {
-        dispatch_async(self.queue) {
-            var images: [Int: UIImage] = [:]
-            var imagesLoaded = 0
-            
-            for i in 0 ..< assets.count {
-                self.imageRequestId = self.imageManager!.requestImageForAsset(assets[i],
-                    targetSize: self.targetSize,
-                    contentMode: self.imageContentMode,
-                    options: nil, resultHandler: { (image, info) in
-                        images[i] = image
-                        imagesLoaded++
-                        if (imagesLoaded == assets.count) {
-                            self.createWallpaperImage(images)
-                        }
-                    })
-            }
-        }
     }
 }

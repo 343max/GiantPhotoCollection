@@ -11,11 +11,9 @@ import Photos
 
 class PhotoCollectionViewController: UICollectionViewController {
     let fetchResult: PHFetchResult
-    let imageManager: PHCachingImageManager
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
-    let assetsPerCell: Int = 128
-    let imageRenderingQueue: dispatch_queue_t
+    let wallpaperManager: WallpaperManager
 
     init(fetchResult: PHFetchResult, title: String) {
         self.fetchResult = fetchResult
@@ -26,27 +24,14 @@ class PhotoCollectionViewController: UICollectionViewController {
             $0.minimumLineSpacing = 0.0
         }
         
-        self.imageManager = PHCachingImageManager()
-        self.imageRenderingQueue = dispatch_queue_create("de.343max.imageRenderingQueue", nil)
+        self.wallpaperManager = WallpaperManager(fetchResult: self.fetchResult,
+            wallpaperImageSize: self.flowLayout.itemSize,
+            thumbnailSize: CGSize(width: 20, height: 20))
 
         super.init(collectionViewLayout: self.flowLayout)
         self.title = title
     }
-    
-    deinit {
-        self.imageManager.stopCachingImagesForAllAssets()
-    }
-    
-    func assetsForIndexPath(indexPath: NSIndexPath) -> [PHAsset] {
-        let loc = indexPath.row * self.assetsPerCell
-        let end = loc + self.assetsPerCell
-        var assets: [PHAsset] = []
-        for i in loc...end {
-            assets += self.fetchResult[i] as PHAsset
-        }
-        return assets
-    }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.collectionView.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
@@ -62,15 +47,13 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
-        // TODO: don't cut off any images
-        return Int(floor(Double(fetchResult.count) / Double(self.assetsPerCell)))
+        return self.wallpaperManager.wallpaperCount
     }
     
     override func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
         return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell) {
-            $0.queue = self.imageRenderingQueue
-            $0.imageManager = self.imageManager
-            $0.assets = self.assetsForIndexPath(indexPath)
+            $0.wallpaperManager = self.wallpaperManager
+            $0.wallpaperIndex = indexPath.row
         }
     }
 }
