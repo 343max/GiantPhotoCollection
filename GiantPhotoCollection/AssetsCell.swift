@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PhotoCell: UICollectionViewCell {
+class AssetsCell: UICollectionViewCell {
     let imageView: UIImageView
     
     init(frame: CGRect) {

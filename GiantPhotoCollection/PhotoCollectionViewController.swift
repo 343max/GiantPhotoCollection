@@ -48,7 +48,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.collectionView.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
-        self.collectionView.registerClass(PhotoCell.classForCoder(), forCellWithReuseIdentifier: photoCellReuseIdentifier)
+        self.collectionView.registerClass(AssetsCell.classForCoder(), forCellWithReuseIdentifier: photoCellReuseIdentifier)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -65,7 +65,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as PhotoCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell
 
         self.imageManager.requestImageForAsset(self.fetchResult[indexPath.row] as PHAsset,
             targetSize: self.flowLayout.itemSize,
