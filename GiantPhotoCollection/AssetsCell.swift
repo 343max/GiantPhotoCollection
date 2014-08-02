@@ -11,6 +11,7 @@ import Photos
 
 class AssetsCell: UICollectionViewCell {
     let imageView: UIImageView
+    var gestureRecognizer: UITapGestureRecognizer?
     var wallpaperManager: WallpaperManager?
     var wallpaperIndex: Int? {
     didSet {
@@ -29,12 +30,20 @@ class AssetsCell: UICollectionViewCell {
     
     init(frame: CGRect) {
         self.imageView = UIImageView(frame: CGRect(origin: CGPointZero, size: frame.size))
-
+        
         super.init(frame: frame)
+        
         self.addSubview(self.imageView)
+        self.gestureRecognizer = build(UITapGestureRecognizer(target: self, action: "didTap:")) {
+            self.addGestureRecognizer($0)
+        }
     }
     
     override func prepareForReuse() {
         self.imageView.image = nil
+    }
+    
+    @objc func didTap(tapGestureRecognizer: UITapGestureRecognizer) {
+        println("status: \(tapGestureRecognizer.state.toRaw())")
     }
 }
