@@ -28,6 +28,9 @@ class AssetsCell: UICollectionViewCell {
     }
     }
     
+    var didTapAction: TargetAction?
+    
+    
     init(frame: CGRect) {
         self.imageView = UIImageView(frame: CGRect(origin: CGPointZero, size: frame.size))
         

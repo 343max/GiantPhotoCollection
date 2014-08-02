@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		501490F5198D6E6B00B31E47 /* TargetActionWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501490F4198D6E6B00B31E47 /* TargetActionWrapper.swift */; };
 		501F7E15198AB082003DE0F3 /* PhotoCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */; };
 		501F7E17198AB553003DE0F3 /* AlbumTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501F7E16198AB553003DE0F3 /* AlbumTableViewController.swift */; };
 		5041E731198AABB800AE7E94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5041E730198AABB800AE7E94 /* AppDelegate.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		501490F4198D6E6B00B31E47 /* TargetActionWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TargetActionWrapper.swift; sourceTree = "<group>"; };
 		501F7E14198AB082003DE0F3 /* PhotoCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewController.swift; sourceTree = "<group>"; };
 		501F7E16198AB553003DE0F3 /* AlbumTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumTableViewController.swift; sourceTree = "<group>"; };
 		5041E72B198AABB800AE7E94 /* GiantPhotoCollection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GiantPhotoCollection.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +91,7 @@
 				501F7E16198AB553003DE0F3 /* AlbumTableViewController.swift */,
 				50F91559198AF28F001CED70 /* Helper.swift */,
 				50745016198BF70800951657 /* WallpaperManager.swift */,
+				501490F4198D6E6B00B31E47 /* TargetActionWrapper.swift */,
 			);
 			path = GiantPhotoCollection;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 				50F9155A198AF28F001CED70 /* Helper.swift in Sources */,
 				501F7E17198AB553003DE0F3 /* AlbumTableViewController.swift in Sources */,
 				50745017198BF70800951657 /* WallpaperManager.swift in Sources */,
+				501490F5198D6E6B00B31E47 /* TargetActionWrapper.swift in Sources */,
 				501F7E15198AB082003DE0F3 /* PhotoCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

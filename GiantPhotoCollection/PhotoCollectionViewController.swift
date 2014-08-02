@@ -31,6 +31,10 @@ class PhotoCollectionViewController: UICollectionViewController {
         super.init(collectionViewLayout: self.flowLayout)
         self.title = title
     }
+    
+    func didTapThumb(thumbIndex: Int) {
+        println("thumbIndex: \(thumbIndex)")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +61,7 @@ class PhotoCollectionViewController: UICollectionViewController {
         return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell) {
             $0.wallpaperManager = self.wallpaperManager
             $0.wallpaperIndex = indexPath.row
+            $0.didTapAction = TargetActionWrapper(target: self, action: PhotoCollectionViewController.didTapThumb)
         }
     }
 }
