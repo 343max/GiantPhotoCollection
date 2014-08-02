@@ -44,6 +44,8 @@ class AssetsCell: UICollectionViewCell {
     }
     
     @objc func didTap(tapGestureRecognizer: UITapGestureRecognizer) {
-        println("status: \(tapGestureRecognizer.state.toRaw())")
+        if let index = self.wallpaperManager!.assetIndex(position: tapGestureRecognizer.locationInView(self), wallpaperIndex: self.wallpaperIndex!) {
+            println("tapped thumbnail: \(index)")
+        }
     }
 }
