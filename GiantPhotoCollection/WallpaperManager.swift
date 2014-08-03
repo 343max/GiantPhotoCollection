@@ -55,6 +55,16 @@ class WallpaperManager {
         }
     }
     
+    func position(var thumbIndex: Int) -> (wallpaperIndex: Int, row: Int, column: Int) {
+        let column = thumbIndex % self.thumbsPerRow
+        thumbIndex -= column
+        let row = (thumbIndex % self.thumbsPerWallpaper) / self.thumbsPerRow
+        thumbIndex -= row * self.thumbsPerRow
+        let wallpaperIndex = thumbIndex / self.thumbsPerWallpaper
+        
+        return (wallpaperIndex, row, column)
+    }
+    
     func assetIndex(#position: CGPoint) -> Int? {
         let column: Int = Int(floor(position.x / self.thumbnailSize.width))
         let row: Int = Int(floor(position.y / self.thumbnailSize.height))

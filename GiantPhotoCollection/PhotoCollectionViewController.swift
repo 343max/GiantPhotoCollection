@@ -38,11 +38,23 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     func didTapThumb(thumbIndex: Int) {
         if (self.remainingThumbnailSizes.count > 0) {
-            let nextViewController = PhotoCollectionViewController(fetchResult: self.fetchResult, title: self.title, thumbnailSizes: self.remainingThumbnailSizes)
+            let nextViewController = PhotoCollectionViewController(fetchResult: self.fetchResult,
+                title: self.title,
+                thumbnailSizes: self.remainingThumbnailSizes)
             self.navigationController.pushViewController(nextViewController, animated: true)
+            dispatch_async(dispatch_get_main_queue()) {
+                nextViewController.scrollTo(thumbnailIndex: thumbIndex, animated: false)
+            }
         } else {
-            println("thumbIndex: \(thumbIndex)")
+            println("tapped thumbIndex: \(thumbIndex)")
         }
+    }
+    
+    func scrollTo(#thumbnailIndex:Int, animated: Bool) {
+        let (wallpaperIndex, _, _) = self.wallpaperManager.position(thumbnailIndex)
+        self.collectionView.scrollToItemAtIndexPath(NSIndexPath(forRow: wallpaperIndex, inSection: 0),
+            atScrollPosition: .CenteredVertically,
+            animated: animated)
     }
 
     override func viewDidLoad() {
