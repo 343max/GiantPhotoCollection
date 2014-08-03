@@ -14,9 +14,13 @@ class PhotoCollectionViewController: UICollectionViewController {
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
     let wallpaperManager: WallpaperManager
+    let remainingThumbnailSizes: [CGSize]
 
-    init(fetchResult: PHFetchResult, title: String) {
+    init(fetchResult: PHFetchResult, title: String, thumbnailSizes:[CGSize]) {
         self.fetchResult = fetchResult
+        
+        let thumbnailSize = thumbnailSizes[0]
+        self.remainingThumbnailSizes = Array(thumbnailSizes[1..<thumbnailSizes.count])
         
         self.flowLayout = build(UICollectionViewFlowLayout()) {
             $0.itemSize = CGSize(width: 320, height: 80)
@@ -26,14 +30,19 @@ class PhotoCollectionViewController: UICollectionViewController {
         
         self.wallpaperManager = WallpaperManager(fetchResult: self.fetchResult,
             wallpaperImageSize: self.flowLayout.itemSize,
-            thumbnailSize: CGSize(width: 20, height: 20))
+            thumbnailSize: thumbnailSize)
 
         super.init(collectionViewLayout: self.flowLayout)
         self.title = title
     }
     
     func didTapThumb(thumbIndex: Int) {
-        println("thumbIndex: \(thumbIndex)")
+        if (self.remainingThumbnailSizes.count > 0) {
+            let nextViewController = PhotoCollectionViewController(fetchResult: self.fetchResult, title: self.title, thumbnailSizes: self.remainingThumbnailSizes)
+            self.navigationController.pushViewController(nextViewController, animated: true)
+        } else {
+            println("thumbIndex: \(thumbIndex)")
+        }
     }
 
     override func viewDidLoad() {

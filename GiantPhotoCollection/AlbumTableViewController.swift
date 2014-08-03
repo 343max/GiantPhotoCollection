@@ -46,7 +46,9 @@ class AlbumTableViewController: UITableViewController {
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         let fetchResult = PHAsset.fetchAssetsWithOptions(fetchOptions)
         
-        let viewController = PhotoCollectionViewController(fetchResult: fetchResult, title: "All Photos")
+        let viewController = PhotoCollectionViewController(fetchResult: fetchResult,
+            title: "All Photos",
+            thumbnailSizes:[CGSize(width: 20, height: 20), CGSize(width: 40, height: 40), CGSize(width: 80, height: 80)])
         self.navigationController.pushViewController(viewController, animated: true)
     }
 }
