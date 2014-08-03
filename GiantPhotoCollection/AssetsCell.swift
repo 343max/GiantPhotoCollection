@@ -48,7 +48,9 @@ class AssetsCell: UICollectionViewCell {
     
     @objc func didTap(tapGestureRecognizer: UITapGestureRecognizer) {
         if let index = self.wallpaperManager!.assetIndex(position: tapGestureRecognizer.locationInView(self), wallpaperIndex: self.wallpaperIndex!) {
-            println("tapped thumbnail: \(index)")
+            if let action = self.didTapAction {
+                action.performAction(index)
+            }
         }
     }
 }
