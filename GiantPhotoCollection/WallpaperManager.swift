@@ -97,7 +97,7 @@ class WallpaperManager {
     private func assets(#range: Range<Int>) -> [PHAsset] {
         var assets = [PHAsset]()
         for i in range {
-            assets += self.fetchResult[i] as PHAsset
+            assets += [self.fetchResult[i] as PHAsset]
         }
         return assets
     }

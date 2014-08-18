@@ -15,7 +15,12 @@ class PhotoCollectionViewController: UICollectionViewController {
     let photoCellReuseIdentifier = "PhotoCell"
     let wallpaperManager: WallpaperManager
     let remainingThumbnailSizes: [CGSize]
-
+    
+    required convenience init(coder aDecoder: NSCoder!) {
+        assert(false, "should not be called")
+        self.init(fetchResult: PHFetchResult(), title: "", thumbnailSizes:[])
+    }
+    
     init(fetchResult: PHFetchResult, title: String, thumbnailSizes:[CGSize]) {
         self.fetchResult = fetchResult
         

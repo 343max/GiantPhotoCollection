@@ -30,8 +30,11 @@ class AssetsCell: UICollectionViewCell {
     
     var didTapAction: TargetAction?
     
+    required convenience init(coder aDecoder: NSCoder!) {
+        self.init(frame: CGRectZero)
+    }
     
-    init(frame: CGRect) {
+    override init(frame: CGRect) {
         self.imageView = UIImageView(frame: CGRect(origin: CGPointZero, size: frame.size))
         
         super.init(frame: frame)
