@@ -9,7 +9,8 @@
 import UIKit
 import Photos
 
-class AlbumTableViewController: UITableViewController {
+class AlbumTableViewController: UITableViewController, PhotoCollectionViewControllerDelegate {
+    let sizes = [CGSize(width: 20, height: 20), CGSize(width: 40, height: 40), CGSize(width: 80, height: 80)]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,9 +47,41 @@ class AlbumTableViewController: UITableViewController {
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         let fetchResult = PHAsset.fetchAssetsWithOptions(fetchOptions)
         
-        let viewController = PhotoCollectionViewController(fetchResult: fetchResult,
-            title: "All Photos",
-            thumbnailSizes:[CGSize(width: 20, height: 20), CGSize(width: 40, height: 40), CGSize(width: 80, height: 80)])
+        let viewController = self.photoCollectionViewController(fetchResult, title: "All Photos", thumbnailSize: self.sizes.first!)
         self.navigationController.pushViewController(viewController, animated: true)
     }
+    
+    func photoCollectionViewController(fetchResult: PHFetchResult, title: String, thumbnailSize: CGSize) -> PhotoCollectionViewController {
+        let viewController = PhotoCollectionViewController(fetchResult: fetchResult,
+            title: "All Photos",
+            thumbnailSize: thumbnailSize)
+        viewController.delegate = self
+        return viewController
+    }
+    
+    
+    
+// MARK: PhotoCollectionViewControllerDelegate
+    
+    func didTapThumb(#photoCollectionViewController: PhotoCollectionViewController, thumbIndex: Int) {
+        if (photoCollectionViewController.thumbnailSize == self.sizes.last!) {
+            println("thumb: \(thumbIndex)")
+        } else {
+            func contains<T: Equatable>(array: [T], needle: T) -> Int? {
+                for i in array.startIndex...array.endIndex {
+                    if (array[i] == needle) {
+                        return i
+                    }
+                }
+                
+                return nil
+            }
+            
+            let oldVC = photoCollectionViewController
+            let index = contains(self.sizes, oldVC.thumbnailSize)!
+            let viewController = self.photoCollectionViewController(oldVC.fetchResult, title: oldVC.title, thumbnailSize: self.sizes[index + 1])
+            self.navigationController.pushViewController(viewController, animated: true)
+        }
+    }
+    
 }

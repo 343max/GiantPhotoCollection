@@ -9,23 +9,27 @@
 import UIKit
 import Photos
 
+protocol PhotoCollectionViewControllerDelegate {
+    func didTapThumb(#photoCollectionViewController: PhotoCollectionViewController, thumbIndex: Int)
+}
+
 class PhotoCollectionViewController: UICollectionViewController {
     let fetchResult: PHFetchResult
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
     let wallpaperManager: WallpaperManager
-    let remainingThumbnailSizes: [CGSize]
+    let thumbnailSize: CGSize
+    var delegate: PhotoCollectionViewControllerDelegate?
     
     required convenience init(coder aDecoder: NSCoder!) {
         assert(false, "should not be called")
-        self.init(fetchResult: PHFetchResult(), title: "", thumbnailSizes:[])
+        self.init(fetchResult: PHFetchResult(), title: "", thumbnailSize: CGSize.zeroSize)
     }
     
-    init(fetchResult: PHFetchResult, title: String, thumbnailSizes:[CGSize]) {
+    init(fetchResult: PHFetchResult, title: String, thumbnailSize:CGSize) {
         self.fetchResult = fetchResult
         
-        let thumbnailSize = thumbnailSizes[0]
-        self.remainingThumbnailSizes = Array(thumbnailSizes[1..<thumbnailSizes.count])
+        self.thumbnailSize = thumbnailSize
         
         self.flowLayout = build(UICollectionViewFlowLayout()) {
             $0.itemSize = CGSize(width: 320, height: 80)
@@ -42,17 +46,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     func didTapThumb(thumbIndex: Int) {
-        if (self.remainingThumbnailSizes.count > 0) {
-            let nextViewController = PhotoCollectionViewController(fetchResult: self.fetchResult,
-                title: self.title,
-                thumbnailSizes: self.remainingThumbnailSizes)
-            self.navigationController.pushViewController(nextViewController, animated: true)
-            dispatch_async(dispatch_get_main_queue()) {
-                nextViewController.scrollTo(thumbnailIndex: thumbIndex, animated: false)
-            }
-        } else {
-            println("tapped thumbIndex: \(thumbIndex)")
-        }
+        self.delegate?.didTapThumb(photoCollectionViewController: self, thumbIndex: thumbIndex)
     }
     
     func scrollTo(#thumbnailIndex:Int, animated: Bool) {
