@@ -54,7 +54,6 @@ class PhotoCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        println(self.view.bounds.size)
 //        self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 80)
         self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 150)
         
