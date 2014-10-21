@@ -10,7 +10,8 @@ import UIKit
 import Photos
 
 class AlbumTableViewController: UITableViewController, PhotoCollectionViewControllerDelegate {
-    let sizes = [CGSize(width: 20, height: 20), CGSize(width: 40, height: 40), CGSize(width: 80, height: 80)]
+    let sizes = [CGSize(width: 25, height: 25), CGSize(width: 37.5, height: 37.5), CGSize(width: 75, height: 75)]
+//    let sizes = [CGSize(width: 20, height: 20), CGSize(width: 40, height: 40), CGSize(width: 80, height: 80)]
 
     override func viewDidLoad() {
         super.viewDidLoad()

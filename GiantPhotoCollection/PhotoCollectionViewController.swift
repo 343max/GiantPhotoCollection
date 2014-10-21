@@ -55,6 +55,8 @@ class PhotoCollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         
         println(self.view.bounds.size)
+//        self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 80)
+        self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 150)
         
         self.wallpaperManager = WallpaperManager(fetchResult: self.fetchResult,
             wallpaperImageSize: self.flowLayout.itemSize,
