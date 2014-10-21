@@ -16,6 +16,7 @@
 		50745017198BF70800951657 /* WallpaperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50745016198BF70800951657 /* WallpaperManager.swift */; };
 		50F91558198AD49E001CED70 /* AssetsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F91557198AD49E001CED70 /* AssetsCell.swift */; };
 		50F9155A198AF28F001CED70 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F91559198AF28F001CED70 /* Helper.swift */; };
+		BB4F8F6619F5F0F500E4FF92 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB4F8F6519F5F0F500E4FF92 /* Launch Screen.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		50745016198BF70800951657 /* WallpaperManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WallpaperManager.swift; sourceTree = "<group>"; };
 		50F91557198AD49E001CED70 /* AssetsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetsCell.swift; sourceTree = "<group>"; };
 		50F91559198AF28F001CED70 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		BB4F8F6519F5F0F500E4FF92 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 				50F91559198AF28F001CED70 /* Helper.swift */,
 				50745016198BF70800951657 /* WallpaperManager.swift */,
 				501490F4198D6E6B00B31E47 /* TargetActionWrapper.swift */,
+				BB4F8F6519F5F0F500E4FF92 /* Launch Screen.xib */,
 			);
 			path = GiantPhotoCollection;
 			sourceTree = "<group>";
@@ -202,6 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5041E738198AABB800AE7E94 /* Images.xcassets in Resources */,
+				BB4F8F6619F5F0F500E4FF92 /* Launch Screen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,7 +333,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = GiantPhotoCollection/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -340,7 +343,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = GiantPhotoCollection/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
