@@ -25,15 +25,15 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
         }
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         return build(tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as UITableViewCell) {
             $0.textLabel.text = "All Photos"
             $0.textLabel.textColor = UIColor.whiteColor()
@@ -42,13 +42,13 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
         }
     }
     
-    override func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         let fetchResult = PHAsset.fetchAssetsWithOptions(fetchOptions)
         
         let viewController = self.photoCollectionViewController(fetchResult, title: "All Photos", thumbnailSize: self.sizes.first!)
-        self.navigationController.pushViewController(viewController, animated: true)
+        self.navigationController!.pushViewController(viewController, animated: true)
     }
     
     func photoCollectionViewController(fetchResult: PHFetchResult, title: String, thumbnailSize: CGSize) -> PhotoCollectionViewController {
@@ -79,8 +79,8 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
             
             let oldVC = photoCollectionViewController
             let index = contains(self.sizes, oldVC.thumbnailSize)!
-            let viewController = self.photoCollectionViewController(oldVC.fetchResult, title: oldVC.title, thumbnailSize: self.sizes[index + 1])
-            self.navigationController.pushViewController(viewController, animated: true)
+            let viewController = self.photoCollectionViewController(oldVC.fetchResult, title: oldVC.title!, thumbnailSize: self.sizes[index + 1])
+            self.navigationController!.pushViewController(viewController, animated: true)
         }
     }
     

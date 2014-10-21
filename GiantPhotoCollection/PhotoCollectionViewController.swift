@@ -21,7 +21,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     let thumbnailSize: CGSize
     var delegate: PhotoCollectionViewControllerDelegate?
     
-    required convenience init(coder aDecoder: NSCoder!) {
+    required convenience init(coder aDecoder: NSCoder) {
         assert(false, "should not be called")
         self.init(fetchResult: PHFetchResult(), title: "", thumbnailSize: CGSize.zeroSize)
     }
@@ -69,15 +69,15 @@ class PhotoCollectionViewController: UICollectionViewController {
         super.viewWillAppear(animated)
     }
 
-    override func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
+    override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
     
-    override func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.wallpaperManager.wallpaperCount
     }
     
-    override func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell) {
             $0.wallpaperManager = self.wallpaperManager
             $0.wallpaperIndex = indexPath.row
