@@ -17,7 +17,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     let fetchResult: PHFetchResult
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
-    let wallpaperManager: WallpaperManager
+    var wallpaperManager: WallpaperManager!
     let thumbnailSize: CGSize
     var delegate: PhotoCollectionViewControllerDelegate?
     
@@ -32,15 +32,10 @@ class PhotoCollectionViewController: UICollectionViewController {
         self.thumbnailSize = thumbnailSize
         
         self.flowLayout = build(UICollectionViewFlowLayout()) {
-            $0.itemSize = CGSize(width: 320, height: 80)
             $0.minimumInteritemSpacing = 0.0
             $0.minimumLineSpacing = 0.0
         }
         
-        self.wallpaperManager = WallpaperManager(fetchResult: self.fetchResult,
-            wallpaperImageSize: self.flowLayout.itemSize,
-            thumbnailSize: thumbnailSize)
-
         super.init(collectionViewLayout: self.flowLayout)
         self.title = title
     }
@@ -58,6 +53,13 @@ class PhotoCollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        println(self.view.bounds.size)
+        
+        self.wallpaperManager = WallpaperManager(fetchResult: self.fetchResult,
+            wallpaperImageSize: self.flowLayout.itemSize,
+            thumbnailSize: thumbnailSize)
+
         build(self.collectionView) {
             $0.indicatorStyle = .White
             $0.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
