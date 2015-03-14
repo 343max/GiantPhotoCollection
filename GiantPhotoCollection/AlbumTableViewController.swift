@@ -53,7 +53,7 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
     }
     
     func photoCollectionViewController(fetchResult: PHFetchResult,
-        title: String, thumbnailSize: CGSize, initialScrollPosition: ThumbScrollPosition = .None) -> PhotoCollectionViewController
+        title: String, thumbnailSize: CGSize, initialScrollPosition: ThumbScrollPosition? = nil) -> PhotoCollectionViewController
     {
         let viewController = PhotoCollectionViewController(fetchResult: fetchResult,
             title: "All Photos",

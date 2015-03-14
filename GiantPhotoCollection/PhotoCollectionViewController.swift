@@ -14,7 +14,6 @@ protocol PhotoCollectionViewControllerDelegate {
 }
 
 enum ThumbScrollPosition {
-    case None
     case FromStart(Int)
     case FromEnd(Int)
 }
@@ -26,14 +25,14 @@ class PhotoCollectionViewController: UICollectionViewController {
     var wallpaperManager: WallpaperManager!
     let thumbnailSize: CGSize
     var delegate: PhotoCollectionViewControllerDelegate?
-    var initialScrollPosition: ThumbScrollPosition
+    var initialScrollPosition: ThumbScrollPosition?
     
     required convenience init(coder aDecoder: NSCoder) {
         assert(false, "should not be called")
         self.init(fetchResult: PHFetchResult(), title: "", thumbnailSize: CGSize.zeroSize)
     }
     
-    init(fetchResult: PHFetchResult, title: String, thumbnailSize: CGSize, initialScrollPosition: ThumbScrollPosition = .None) {
+    init(fetchResult: PHFetchResult, title: String, thumbnailSize: CGSize, initialScrollPosition: ThumbScrollPosition? = nil) {
         self.fetchResult = fetchResult
         self.thumbnailSize = thumbnailSize
         self.initialScrollPosition = initialScrollPosition
@@ -54,8 +53,6 @@ class PhotoCollectionViewController: UICollectionViewController {
     func scrollTo(#thumbnailIndex: ThumbScrollPosition, animated: Bool) {
         var index: Int
         switch thumbnailIndex {
-        case .None:
-            return
         case .FromStart(let indexFromStart):
             index = indexFromStart
         case .FromEnd(let indexFromEnd):
@@ -87,8 +84,10 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        self.scrollTo(thumbnailIndex: self.initialScrollPosition, animated: false)
-        self.initialScrollPosition = .None
+        if let scrollPosition = self.initialScrollPosition {
+            self.scrollTo(thumbnailIndex: scrollPosition, animated: false)
+            self.initialScrollPosition = nil
+        }
     }
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
