@@ -16,6 +16,15 @@ protocol PhotoCollectionViewControllerDelegate {
 enum ThumbScrollPosition {
     case FromStart(Int)
     case FromEnd(Int)
+
+    func absoluteIndex(#countOfItems: Int) -> Int {
+        switch self {
+            case .FromStart(let index):
+                return index
+            case .FromEnd(let indexFromEnd):
+                return countOfItems - indexFromEnd - 1;
+        }
+    }
 }
 
 class PhotoCollectionViewController: UICollectionViewController {
@@ -51,14 +60,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     func scrollTo(#thumbnailIndex: ThumbScrollPosition, animated: Bool) {
-        var index: Int
-        switch thumbnailIndex {
-        case .FromStart(let indexFromStart):
-            index = indexFromStart
-        case .FromEnd(let indexFromEnd):
-            index = self.wallpaperManager.fetchResult.count - 1
-
-        }
+        let index = thumbnailIndex.absoluteIndex(countOfItems: self.wallpaperManager.fetchResult.count)
         let (wallpaperIndex, _, _) = self.wallpaperManager.position(index)
         self.collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: wallpaperIndex, inSection: 0),
             atScrollPosition: .CenteredVertically,
