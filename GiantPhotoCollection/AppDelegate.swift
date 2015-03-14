@@ -13,8 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             
     var window: UIWindow?
 
-
-    func application(application: UIApplication!, didFinishLaunchingWithOptions launchOptions: NSDictionary!) -> Bool {
+    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
         
         let albumTableViewController = AlbumTableViewController(style: UITableViewStyle.Plain)
         let navigationController = build(UINavigationController(rootViewController: albumTableViewController)) {

@@ -46,7 +46,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     func scrollTo(#thumbnailIndex:Int, animated: Bool) {
         let (wallpaperIndex, _, _) = self.wallpaperManager.position(thumbnailIndex)
-        self.collectionView.scrollToItemAtIndexPath(NSIndexPath(forRow: wallpaperIndex, inSection: 0),
+        self.collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: wallpaperIndex, inSection: 0),
             atScrollPosition: .CenteredVertically,
             animated: animated)
     }
@@ -61,7 +61,7 @@ class PhotoCollectionViewController: UICollectionViewController {
             wallpaperImageSize: self.flowLayout.itemSize,
             thumbnailSize: thumbnailSize)
 
-        build(self.collectionView) {
+        build(self.collectionView!) {
             $0.indicatorStyle = .White
             $0.backgroundColor = UIColor(white: 0.2, alpha: 1.0)
             $0.registerClass(AssetsCell.classForCoder(), forCellWithReuseIdentifier: self.photoCellReuseIdentifier)
@@ -81,7 +81,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as AssetsCell) {
+        return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as! AssetsCell) {
             $0.wallpaperManager = self.wallpaperManager
             $0.wallpaperIndex = indexPath.row
             $0.didTapAction = TargetActionWrapper(target: self, action: PhotoCollectionViewController.didTapThumb)

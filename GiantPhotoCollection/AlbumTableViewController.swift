@@ -35,9 +35,9 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return build(tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as UITableViewCell) {
-            $0.textLabel.text = "All Photos"
-            $0.textLabel.textColor = UIColor.whiteColor()
+        return build(tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! UITableViewCell) {
+            $0.textLabel!.text = "All Photos"
+            $0.textLabel!.textColor = UIColor.whiteColor()
             $0.accessoryType = .DisclosureIndicator
             $0.backgroundColor = self.tableView.backgroundColor
         }
