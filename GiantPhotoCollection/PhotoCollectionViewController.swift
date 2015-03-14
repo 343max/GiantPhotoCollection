@@ -63,19 +63,20 @@ class PhotoCollectionViewController: UICollectionViewController {
         let index = thumbnailIndex.absoluteIndex(countOfItems: self.photoSegmentManager.fetchResult.count)
         let (segmentIndex, _, _) = self.photoSegmentManager.position(index)
         self.collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: segmentIndex, inSection: 0),
-            atScrollPosition: .CenteredVertically,
-            animated: animated)
+                atScrollPosition: .CenteredVertically,
+                animated: animated)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 80)
-        self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 150)
-        
+
+        let segmentSize = PhotoSegmentController.segmentSize(viewWidth: self.view.bounds.width, thumbnailSize: thumbnailSize)
+        self.flowLayout.itemSize = segmentSize
+
         self.photoSegmentManager = PhotoSegmentController(fetchResult: self.fetchResult,
-            segmentSize: self.flowLayout.itemSize,
-            thumbnailSize: thumbnailSize)
+                                                          segmentSize: segmentSize,
+                                                        thumbnailSize: thumbnailSize,
+                                                                scale: self.view.contentScaleFactor)
 
         build(self.collectionView!) {
             $0.indicatorStyle = .White

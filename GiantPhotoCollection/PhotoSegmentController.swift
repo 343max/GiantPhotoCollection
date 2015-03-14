@@ -5,21 +5,28 @@ import Photos
 class PhotoSegmentController {
     typealias CreatedSegmentImageCallback = (image: UIImage, index: Int) -> ()
     
+    let fetchResult: PHFetchResult
     let segmentSize: CGSize
     let thumbnailSize: CGSize
+    let scale: CGFloat
     let imageManager: PHImageManager
     let queue: dispatch_queue_t
-    let fetchResult: PHFetchResult
     let cache: NSCache
     
     let thumbsPerRow: Int
     let thumbsPerSegment: Int
     let segmentCount: Int
-    
-    init(fetchResult: PHFetchResult, segmentSize: CGSize, thumbnailSize: CGSize) {
+
+    class func segmentSize(#viewWidth: CGFloat, thumbnailSize: CGSize) -> CGSize {
+        let rowCount = floor(150.0 / thumbnailSize.height)
+        return CGSize(width: viewWidth, height: rowCount * thumbnailSize.height)
+    }
+
+    init(fetchResult: PHFetchResult, segmentSize: CGSize, thumbnailSize: CGSize, scale: CGFloat) {
         self.fetchResult = fetchResult
         self.segmentSize = segmentSize
         self.thumbnailSize = thumbnailSize
+        self.scale = scale
         self.queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
         self.imageManager = PHImageManager()
         self.cache = NSCache()
@@ -115,7 +122,7 @@ class PhotoSegmentController {
     }
     
     private func drawSegment(images: [Int: UIImage]) -> UIImage {
-        
+
         UIGraphicsBeginImageContextWithOptions(self.segmentSize, false, 2.0)
         
         for i in images.keys {
