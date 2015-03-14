@@ -12,13 +12,13 @@ import Photos
 class AssetsCell: UICollectionViewCell {
     let imageView: UIImageView
     var gestureRecognizer: UITapGestureRecognizer?
-    var wallpaperManager: WallpaperManager?
-    var wallpaperIndex: Int? {
+    var photoSegmenetManager: PhotoSegmentController?
+    var segmentIndex: Int? {
     didSet {
-        if let wallpaperIndex = self.wallpaperIndex {
-            self.wallpaperManager!.createImageForWallpaper(wallpaperIndex: wallpaperIndex,
+        if let segmentIndex = self.segmentIndex {
+            self.photoSegmenetManager!.createSegmentImage(segmentIndex: segmentIndex,
                 callback: { (image, index) in
-                    if (index != self.wallpaperIndex) {
+                    if (index != self.segmentIndex) {
                         return
                     }
                     
@@ -50,7 +50,7 @@ class AssetsCell: UICollectionViewCell {
     }
     
     @objc func didTap(tapGestureRecognizer: UITapGestureRecognizer) {
-        if let index = self.wallpaperManager!.assetIndex(position: tapGestureRecognizer.locationInView(self), wallpaperIndex: self.wallpaperIndex!) {
+        if let index = self.photoSegmenetManager!.assetIndex(position: tapGestureRecognizer.locationInView(self), segmentIndex: self.segmentIndex!) {
             if let action = self.didTapAction {
                 action.performAction(index)
             }

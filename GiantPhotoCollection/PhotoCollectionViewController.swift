@@ -31,7 +31,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     let fetchResult: PHFetchResult
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
-    var wallpaperManager: WallpaperManager!
+    var photoSegmentManager: PhotoSegmentController!
     let thumbnailSize: CGSize
     var delegate: PhotoCollectionViewControllerDelegate?
     var initialScrollPosition: ThumbScrollPosition?
@@ -60,9 +60,9 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     func scrollTo(#thumbnailIndex: ThumbScrollPosition, animated: Bool) {
-        let index = thumbnailIndex.absoluteIndex(countOfItems: self.wallpaperManager.fetchResult.count)
-        let (wallpaperIndex, _, _) = self.wallpaperManager.position(index)
-        self.collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: wallpaperIndex, inSection: 0),
+        let index = thumbnailIndex.absoluteIndex(countOfItems: self.photoSegmentManager.fetchResult.count)
+        let (segmentIndex, _, _) = self.photoSegmentManager.position(index)
+        self.collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: segmentIndex, inSection: 0),
             atScrollPosition: .CenteredVertically,
             animated: animated)
     }
@@ -73,8 +73,8 @@ class PhotoCollectionViewController: UICollectionViewController {
 //        self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 80)
         self.flowLayout.itemSize = CGSize(width: CGRectGetWidth(self.view.bounds), height: 150)
         
-        self.wallpaperManager = WallpaperManager(fetchResult: self.fetchResult,
-            wallpaperImageSize: self.flowLayout.itemSize,
+        self.photoSegmentManager = PhotoSegmentController(fetchResult: self.fetchResult,
+            segmentSize: self.flowLayout.itemSize,
             thumbnailSize: thumbnailSize)
 
         build(self.collectionView!) {
@@ -97,13 +97,13 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.wallpaperManager.wallpaperCount
+        return self.photoSegmentManager.segmentCount
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as! AssetsCell) {
-            $0.wallpaperManager = self.wallpaperManager
-            $0.wallpaperIndex = indexPath.row
+            $0.photoSegmenetManager = self.photoSegmentManager
+            $0.segmentIndex = indexPath.row
             $0.didTapAction = TargetActionWrapper(target: self, action: PhotoCollectionViewController.didTapThumb)
         }
     }
