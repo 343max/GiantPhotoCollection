@@ -13,6 +13,12 @@ protocol PhotoCollectionViewControllerDelegate {
     func didTapThumb(#photoCollectionViewController: PhotoCollectionViewController, thumbIndex: Int)
 }
 
+enum ThumbScrollPosition {
+    case None
+    case FromStart(Int)
+    case FromEnd(Int)
+}
+
 class PhotoCollectionViewController: UICollectionViewController {
     let fetchResult: PHFetchResult
     let flowLayout: UICollectionViewFlowLayout
@@ -20,17 +26,18 @@ class PhotoCollectionViewController: UICollectionViewController {
     var wallpaperManager: WallpaperManager!
     let thumbnailSize: CGSize
     var delegate: PhotoCollectionViewControllerDelegate?
+    var initialScrollPosition: ThumbScrollPosition
     
     required convenience init(coder aDecoder: NSCoder) {
         assert(false, "should not be called")
         self.init(fetchResult: PHFetchResult(), title: "", thumbnailSize: CGSize.zeroSize)
     }
     
-    init(fetchResult: PHFetchResult, title: String, thumbnailSize:CGSize) {
+    init(fetchResult: PHFetchResult, title: String, thumbnailSize: CGSize, initialScrollPosition: ThumbScrollPosition = .None) {
         self.fetchResult = fetchResult
-        
         self.thumbnailSize = thumbnailSize
-        
+        self.initialScrollPosition = initialScrollPosition
+
         self.flowLayout = build(UICollectionViewFlowLayout()) {
             $0.minimumInteritemSpacing = 0.0
             $0.minimumLineSpacing = 0.0
@@ -44,8 +51,18 @@ class PhotoCollectionViewController: UICollectionViewController {
         self.delegate?.didTapThumb(photoCollectionViewController: self, thumbIndex: thumbIndex)
     }
     
-    func scrollTo(#thumbnailIndex:Int, animated: Bool) {
-        let (wallpaperIndex, _, _) = self.wallpaperManager.position(thumbnailIndex)
+    func scrollTo(#thumbnailIndex: ThumbScrollPosition, animated: Bool) {
+        var index: Int
+        switch thumbnailIndex {
+        case .None:
+            return
+        case .FromStart(let indexFromStart):
+            index = indexFromStart
+        case .FromEnd(let indexFromEnd):
+            index = self.wallpaperManager.fetchResult.count - 1
+
+        }
+        let (wallpaperIndex, _, _) = self.wallpaperManager.position(index)
         self.collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: wallpaperIndex, inSection: 0),
             atScrollPosition: .CenteredVertically,
             animated: animated)
@@ -70,6 +87,8 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.scrollTo(thumbnailIndex: self.initialScrollPosition, animated: false)
+        self.initialScrollPosition = .None
     }
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {

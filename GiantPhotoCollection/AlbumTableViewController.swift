@@ -48,14 +48,18 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         let fetchResult = PHAsset.fetchAssetsWithOptions(fetchOptions)
         
-        let viewController = self.photoCollectionViewController(fetchResult, title: "All Photos", thumbnailSize: self.sizes.first!)
+        let viewController = self.photoCollectionViewController(fetchResult, title: "All Photos", thumbnailSize: self.sizes.first!, initialScrollPosition: .FromEnd(0))
         self.navigationController!.pushViewController(viewController, animated: true)
     }
     
-    func photoCollectionViewController(fetchResult: PHFetchResult, title: String, thumbnailSize: CGSize) -> PhotoCollectionViewController {
+    func photoCollectionViewController(fetchResult: PHFetchResult,
+        title: String, thumbnailSize: CGSize, initialScrollPosition: ThumbScrollPosition = .None) -> PhotoCollectionViewController
+    {
         let viewController = PhotoCollectionViewController(fetchResult: fetchResult,
             title: "All Photos",
-            thumbnailSize: thumbnailSize)
+            thumbnailSize: thumbnailSize,
+            initialScrollPosition: initialScrollPosition
+        )
         viewController.delegate = self
         return viewController
     }
@@ -80,7 +84,10 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
             
             let oldVC = photoCollectionViewController
             let index = contains(self.sizes, oldVC.thumbnailSize)!
-            let viewController = self.photoCollectionViewController(oldVC.fetchResult, title: oldVC.title!, thumbnailSize: self.sizes[index + 1])
+            let viewController = self.photoCollectionViewController(oldVC.fetchResult,
+                                                             title: oldVC.title!,
+                                                     thumbnailSize: self.sizes[index + 1],
+                                             initialScrollPosition: .FromStart(thumbIndex))
             self.navigationController!.pushViewController(viewController, animated: true)
         }
     }
