@@ -31,7 +31,7 @@ class PhotoSegmentController {
         self.imageManager = PHImageManager()
         self.cache = NSCache()
         
-        self.thumbsPerRow = Int(floor(segmentSize.width / thumbnailSize.width))
+        self.thumbsPerRow = Int(ceil(segmentSize.width / thumbnailSize.width))
         self.thumbsPerSegment = Int(floor(segmentSize.height / thumbnailSize.height)) * self.thumbsPerRow
         
         self.segmentCount = Int(ceil(Double(self.fetchResult.count) / Double(self.thumbsPerSegment)))

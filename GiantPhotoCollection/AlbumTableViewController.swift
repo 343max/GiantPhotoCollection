@@ -10,8 +10,17 @@ import UIKit
 import Photos
 
 class AlbumTableViewController: UITableViewController, PhotoCollectionViewControllerDelegate {
-    let sizes = [CGSize(width: 25, height: 25), CGSize(width: 37.5, height: 37.5), CGSize(width: 75, height: 75)]
-//    let sizes = [CGSize(width: 20, height: 20), CGSize(width: 40, height: 40), CGSize(width: 80, height: 80)]
+    let thumbsPerRow = [16, 8, 4]
+    let scale: CGFloat
+
+    override init(style: UITableViewStyle) {
+        self.scale = UIScreen.mainScreen().scale
+        super.init(style: style)
+    }
+
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,9 +56,17 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         let fetchResult = PHAsset.fetchAssetsWithOptions(fetchOptions)
-        
-        let viewController = self.photoCollectionViewController(fetchResult, title: "All Photos", thumbnailSize: self.sizes.first!, initialScrollPosition: .FromEnd(0))
+
+        let thumbSize = self.thumbSize(thumbsPerRow: self.thumbsPerRow.first!)
+        let viewController = self.photoCollectionViewController(fetchResult, title: "All Photos", thumbnailSize: thumbSize, initialScrollPosition: .FromEnd(0))
         self.navigationController!.pushViewController(viewController, animated: true)
+    }
+
+    func thumbSize(#thumbsPerRow: Int) -> CGSize {
+        let viewWidth = self.view.bounds.width
+        let scale = self.scale
+        let sideLength = ceil(viewWidth / CGFloat(thumbsPerRow) * scale) / scale;
+        return CGSize(width: sideLength, height: sideLength)
     }
     
     func photoCollectionViewController(fetchResult: PHFetchResult,
@@ -63,13 +80,23 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
         viewController.delegate = self
         return viewController
     }
-    
-    
+
     
 // MARK: PhotoCollectionViewControllerDelegate
     
     func didTapThumb(#photoCollectionViewController: PhotoCollectionViewController, thumbIndex: Int) {
-        if (photoCollectionViewController.thumbnailSize == self.sizes.last!) {
+        func indexOf(size: CGSize, thumbsPerRow: [Int]) -> Int? {
+            for i in thumbsPerRow.startIndex...thumbsPerRow.endIndex {
+                if (self.thumbSize(thumbsPerRow: thumbsPerRow[i]) == size) {
+                    return i
+                }
+            }
+            return nil
+        }
+
+        let index = indexOf(photoCollectionViewController.thumbnailSize, self.thumbsPerRow) as Int!
+
+        if (index == self.thumbsPerRow.endIndex - 1) {
             println("thumb: \(thumbIndex)")
         } else {
             func contains<T: Equatable>(array: [T], needle: T) -> Int? {
@@ -81,12 +108,12 @@ class AlbumTableViewController: UITableViewController, PhotoCollectionViewContro
                 
                 return nil
             }
+
+            self.thumbsPerRow
             
-            let oldVC = photoCollectionViewController
-            let index = contains(self.sizes, oldVC.thumbnailSize)!
-            let viewController = self.photoCollectionViewController(oldVC.fetchResult,
-                                                             title: oldVC.title!,
-                                                     thumbnailSize: self.sizes[index + 1],
+            let viewController = self.photoCollectionViewController(photoCollectionViewController.fetchResult,
+                                                             title: photoCollectionViewController.title!,
+                                                     thumbnailSize: self.thumbSize(thumbsPerRow:self.thumbsPerRow[index + 1]),
                                              initialScrollPosition: .FromStart(thumbIndex))
             self.navigationController!.pushViewController(viewController, animated: true)
         }

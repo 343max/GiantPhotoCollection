@@ -87,6 +87,7 @@ class PhotoCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+
         if let scrollPosition = self.initialScrollPosition {
             self.scrollTo(thumbnailIndex: scrollPosition, animated: false)
             self.initialScrollPosition = nil
