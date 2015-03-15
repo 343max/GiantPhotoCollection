@@ -76,7 +76,7 @@ class PhotoCollectionViewController: UICollectionViewController, PhotoSemgentCon
         self.photoSegmentManager = PhotoSegmentController(fetchResult: self.fetchResult,
                                                           segmentSize: segmentSize,
                                                         thumbnailSize: thumbnailSize,
-                                                                scale: self.view.contentScaleFactor)
+                                                                scale: UIScreen.mainScreen().scale)
         self.photoSegmentManager.delegate = self
 
         build(self.collectionView!) {
@@ -94,7 +94,24 @@ class PhotoCollectionViewController: UICollectionViewController, PhotoSemgentCon
             self.initialScrollPosition = nil
         }
     }
-    
+
+    override func didReceiveMemoryWarning() {
+        self.photoSegmentManager.cache.removeAllObjects()
+    }
+
+    func preloadSegments(#inRect: CGRect) {
+        let segmentHeight = self.photoSegmentManager.segmentSize.height
+        let range: Range<Int> = Range(start: Int(floor(inRect.minY / segmentHeight)),
+                                        end: Int(ceil(inRect.maxY / segmentHeight)))
+
+        for i in 0..<self.photoSegmentManager.segmentCount {
+            if (contains(range, i)) {
+                self.photoSegmentManager.createSegmentImage(segmentIndex: i)
+            } else {
+                self.photoSegmentManager.cancelSegmentImage(segmentIndex: i)
+            }
+        }
+    }
 
 // MARK: UICollectionViewControllerDelegate, UICollectionViewControllerDataSource
 
@@ -138,5 +155,14 @@ class PhotoCollectionViewController: UICollectionViewController, PhotoSemgentCon
         if let cell: AssetsCell = collectionView.cellForItemAtIndexPath(indexPath) as? AssetsCell {
             cell.imageView.image = didCreateImage
         }
+    }
+
+// MARK: UIScrollViewDelegate
+
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+        var frame = CGRect(origin: scrollView.contentOffset, size: scrollView.bounds.size)
+        frame.origin.y -= frame.height * 2.0
+        frame.size.height *= 5.0
+        self.preloadSegments(inRect: frame)
     }
 }

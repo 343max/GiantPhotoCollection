@@ -70,6 +70,10 @@ class PhotoSegmentController {
     }
 
     func createSegmentImage(#segmentIndex: Int) -> UIImage? {
+        if segmentIndex < 0 || segmentIndex >= self.segmentCount {
+            return nil
+        }
+
         if let image: UIImage = self.cache.objectForKey(segmentIndex) as? UIImage {
             return image
         }
