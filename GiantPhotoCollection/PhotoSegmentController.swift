@@ -4,6 +4,23 @@ import Photos
 
 class PhotoSegmentController {
     typealias CreatedSegmentImageCallback = (image: UIImage, index: Int) -> ()
+
+    class JobToken {
+        typealias CreatedSegmentImageCallback = PhotoSegmentController.CreatedSegmentImageCallback
+
+        var shouldCancel: Bool = false
+        var callbacks: [CreatedSegmentImageCallback] = []
+
+        func addCallback(callback: CreatedSegmentImageCallback) {
+            self.callbacks += [callback]
+        }
+
+        func executeCallbacks(#image: UIImage, index: Int) {
+            for callback in self.callbacks {
+                callback(image: image, index: index)
+            }
+        }
+    }
     
     let fetchResult: PHFetchResult
     let segmentSize: CGSize
@@ -17,6 +34,8 @@ class PhotoSegmentController {
     let thumbsPerSegment: Int
     let segmentCount: Int
 
+    var jobs: [Int: JobToken] = [:]
+
     class func segmentSize(#viewWidth: CGFloat, thumbnailSize: CGSize) -> CGSize {
         let rowCount = floor(150.0 / thumbnailSize.height)
         return CGSize(width: viewWidth, height: rowCount * thumbnailSize.height)
@@ -28,7 +47,7 @@ class PhotoSegmentController {
         self.thumbnailSize = thumbnailSize
         self.scale = scale
         self.queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
-        self.imageManager = PHImageManager()
+        self.imageManager = PHImageManager.defaultManager()
         self.cache = NSCache()
         
         self.thumbsPerRow = Int(ceil(segmentSize.width / thumbnailSize.width))
@@ -36,23 +55,48 @@ class PhotoSegmentController {
         
         self.segmentCount = Int(ceil(Double(self.fetchResult.count) / Double(self.thumbsPerSegment)))
     }
-    
-    func createSegmentImage(#segmentIndex: Int, callback: CreatedSegmentImageCallback) {
+
+    func createSegmentImage(#segmentIndex: Int, callback: CreatedSegmentImageCallback?) {
         if let image: UIImage = self.cache.objectForKey(segmentIndex) as? UIImage {
-            callback(image: image, index: segmentIndex)
+            if let callback = callback {
+                callback(image: image, index: segmentIndex)
+            }
             return
         }
 
-        dispatch_async(self.queue) {
-            let assets = self.assets(range: self.rangeForAssets(segmentIndex: segmentIndex))
-            let images = self.loadImages(assets)
-            let segmentImage = self.drawSegment(images)
-            self.cache.setObject(segmentImage, forKey: segmentIndex)
-            dispatch_async(dispatch_get_main_queue()) {
-                callback(image: segmentImage, index: segmentIndex)
-            }
-
+        let jobToken: JobToken
+        if let token = self.jobs[segmentIndex] {
+            jobToken = token
+        } else {
+            jobToken = JobToken()
+            self.jobs[segmentIndex] = jobToken
         }
+
+        if let callback = callback {
+            jobToken.addCallback(callback)
+        }
+
+        dispatch_async(self.queue) {
+            if let assets = self.assets(range: self.rangeForAssets(segmentIndex: segmentIndex), job: jobToken) {
+                if let images = self.loadImages(assets, job: jobToken) {
+                    if let segmentImage = self.drawSegment(images, job: jobToken) {
+                        self.cache.setObject(segmentImage, forKey: segmentIndex)
+                        dispatch_async(dispatch_get_main_queue()) {
+                            jobToken.executeCallbacks(image: segmentImage, index: segmentIndex)
+                        }
+                    }
+                }
+            }
+            self.jobs[segmentIndex] = nil
+        }
+    }
+
+    func cancelSegmentImage(#segmentIndex: Int) {
+        if self.jobs[segmentIndex] != nil {
+            println("cancel segment \(segmentIndex)")
+        }
+        self.jobs[segmentIndex]?.shouldCancel = true
+        self.jobs[segmentIndex] = nil
     }
     
     func position(var thumbIndex: Int) -> (segmentIndex: Int, row: Int, column: Int) {
@@ -94,18 +138,26 @@ class PhotoSegmentController {
         return start..<end
     }
     
-    private func assets(#range: Range<Int>) -> [PHAsset] {
+    private func assets(#range: Range<Int>, job: JobToken) -> [PHAsset]? {
         var assets = [PHAsset]()
         for i in range {
+            if (job.shouldCancel) {
+                return nil
+            }
+
             assets += [self.fetchResult[i] as! PHAsset]
         }
         return assets
     }
     
-    private func loadImages(assets: [PHAsset]) -> [Int:UIImage] {
+    private func loadImages(assets: [PHAsset], job: JobToken) -> [Int:UIImage]? {
         var images = [Int: UIImage]()
         
         for i in 0..<assets.count {
+            if (job.shouldCancel) {
+                return nil
+            }
+
             self.imageManager.requestImageForAsset(assets[i],
                 targetSize: self.thumbnailSize,
                 contentMode: PHImageContentMode.AspectFill,
@@ -121,11 +173,15 @@ class PhotoSegmentController {
         return images;
     }
     
-    private func drawSegment(images: [Int: UIImage]) -> UIImage {
+    private func drawSegment(images: [Int: UIImage], job: JobToken) -> UIImage? {
 
         UIGraphicsBeginImageContextWithOptions(self.segmentSize, false, 2.0)
         
         for i in images.keys {
+            if (job.shouldCancel) {
+                return nil
+            }
+
             let column: CGFloat = CGFloat(i % self.thumbsPerRow)
             let row: CGFloat = CGFloat(CGFloat(CGFloat(i) - CGFloat(column)) / CGFloat(self.thumbsPerRow))
             let frame = CGRect(origin: CGPoint(x: column * self.thumbnailSize.width, y: row * self.thumbnailSize.height), size: self.thumbnailSize)

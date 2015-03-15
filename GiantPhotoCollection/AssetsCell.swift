@@ -14,18 +14,23 @@ class AssetsCell: UICollectionViewCell {
     var gestureRecognizer: UITapGestureRecognizer?
     var photoSegmenetManager: PhotoSegmentController?
     var segmentIndex: Int? {
-    didSet {
-        if let segmentIndex = self.segmentIndex {
-            self.photoSegmenetManager!.createSegmentImage(segmentIndex: segmentIndex,
-                callback: { (image, index) in
-                    if (index != self.segmentIndex) {
-                        return
-                    }
-                    
-                    self.imageView.image = image
-                })
+        willSet(newValue) {
+            if let oldSegmentIndex = self.segmentIndex {
+                self.photoSegmenetManager!.cancelSegmentImage(segmentIndex: oldSegmentIndex)
+            }
         }
-    }
+        didSet {
+            if let segmentIndex = self.segmentIndex {
+                self.photoSegmenetManager!.createSegmentImage(segmentIndex: segmentIndex,
+                    callback: { (image, index) in
+                        if (index != self.segmentIndex) {
+                            return
+                        }
+
+                        self.imageView.image = image
+                })
+            }
+        }
     }
     
     var didTapAction: TargetAction?
@@ -46,6 +51,7 @@ class AssetsCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
+        self.segmentIndex = nil
         self.imageView.image = nil
     }
     
