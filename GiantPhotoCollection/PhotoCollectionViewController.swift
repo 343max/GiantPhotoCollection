@@ -94,6 +94,7 @@ class PhotoCollectionViewController: UICollectionViewController, PhotoSemgentCon
             self.initialScrollPosition = nil
         }
     }
+    
 
 // MARK: UICollectionViewControllerDelegate, UICollectionViewControllerDataSource
 
@@ -117,6 +118,11 @@ class PhotoCollectionViewController: UICollectionViewController, PhotoSemgentCon
         }
     }
 
+    override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        self.photoSegmentManager.cancelSegmentImage(segmentIndex: indexPath.row)
+    }
+
+
 // MARK: PhotoSemgentControllerDelegate
 
     func photoSegmentController(photoSegmentController: PhotoSegmentController, didCreateImage: UIImage, forSegment: Int) {
@@ -125,6 +131,7 @@ class PhotoCollectionViewController: UICollectionViewController, PhotoSemgentCon
         let collectionView = self.collectionView as UICollectionView!
 
         if !contains(collectionView.indexPathsForVisibleItems() as! [NSIndexPath], indexPath) {
+            println("finished needless segment: \(indexPath.row)")
             return
         }
 

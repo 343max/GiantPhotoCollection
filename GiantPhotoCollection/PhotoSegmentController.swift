@@ -7,10 +7,6 @@ protocol PhotoSemgentControllerDelegate: NSObjectProtocol {
 }
 
 class PhotoSegmentController {
-    class JobToken {
-        var shouldCancel: Bool = false
-    }
-
     weak var delegate: PhotoSemgentControllerDelegate?
     
     let fetchResult: PHFetchResult
@@ -18,14 +14,13 @@ class PhotoSegmentController {
     let thumbnailSize: CGSize
     let scale: CGFloat
     let imageManager: PHImageManager
-    let queue: dispatch_queue_t
     let cache: NSCache
-    
+    let queue: NSOperationQueue
+    let operations: NSMapTable
+
     let thumbsPerRow: Int
     let thumbsPerSegment: Int
     let segmentCount: Int
-
-    var jobs: [Int: JobToken] = [:]
 
     class func segmentSize(#viewWidth: CGFloat, thumbnailSize: CGSize) -> CGSize {
         let rowCount = min(floor(200.0 / thumbnailSize.height), 4)
@@ -37,9 +32,12 @@ class PhotoSegmentController {
         self.segmentSize = segmentSize
         self.thumbnailSize = thumbnailSize
         self.scale = scale
-        self.queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)
+        self.queue = NSOperationQueue()
+        self.queue.qualityOfService = NSQualityOfService.UserInitiated
+        self.queue.maxConcurrentOperationCount = 1
         self.imageManager = PHImageManager.defaultManager()
         self.cache = NSCache()
+        self.operations = NSMapTable.strongToWeakObjectsMapTable()
         
         self.thumbsPerRow = Int(ceil(segmentSize.width / thumbnailSize.width))
         self.thumbsPerSegment = Int(floor(segmentSize.height / thumbnailSize.height)) * self.thumbsPerRow
@@ -47,42 +45,60 @@ class PhotoSegmentController {
         self.segmentCount = Int(ceil(Double(self.fetchResult.count) / Double(self.thumbsPerSegment)))
     }
 
+    class CreateSegmentOperation: NSOperation {
+        let segmentIndex: Int
+        var image: UIImage?
+        weak var controller: PhotoSegmentController?
+
+        init(segmentIndex: Int) {
+            self.segmentIndex = segmentIndex
+            super.init()
+        }
+
+        override func main() {
+            let controller = self.controller!
+            if let assets = controller.assets(range: controller.rangeForAssets(segmentIndex: self.segmentIndex), operation: self) {
+                if let images = controller.loadImages(assets, operation: self) {
+                    if let segmentImage = controller.drawSegment(images, operation: self) {
+                        self.image = segmentImage
+                    }
+                }
+            }
+        }
+    }
+
     func createSegmentImage(#segmentIndex: Int) -> UIImage? {
         if let image: UIImage = self.cache.objectForKey(segmentIndex) as? UIImage {
             return image
         }
 
-        let jobToken: JobToken
-        if let token = self.jobs[segmentIndex] {
-            jobToken = token
-        } else {
-            jobToken = JobToken()
-            self.jobs[segmentIndex] = jobToken
+        if let operation: NSOperation = self.operations.objectForKey(segmentIndex) as? NSOperation {
+            if (!operation.cancelled) {
+                return nil
+            }
         }
 
-        dispatch_async(self.queue) {
-            if let assets = self.assets(range: self.rangeForAssets(segmentIndex: segmentIndex), job: jobToken) {
-                if let images = self.loadImages(assets, job: jobToken) {
-                    if let segmentImage = self.drawSegment(images, job: jobToken) {
-                        self.cache.setObject(segmentImage, forKey: segmentIndex)
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.delegate?.photoSegmentController(self, didCreateImage: segmentImage, forSegment: segmentIndex)
-                        }
-                    }
+        let operation = CreateSegmentOperation(segmentIndex: segmentIndex)
+        operation.controller = self
+        operation.completionBlock = {
+            dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                if let image = operation.image {
+                    self.cache.setObject(image, forKey: operation.segmentIndex)
+                    self.delegate?.photoSegmentController(self, didCreateImage: image, forSegment: operation.segmentIndex)
                 }
             }
-            self.jobs[segmentIndex] = nil
         }
+
+        self.operations.setObject(operation, forKey: segmentIndex)
+        self.queue.addOperation(operation)
 
         return nil
     }
 
     func cancelSegmentImage(#segmentIndex: Int) {
-        if self.jobs[segmentIndex] != nil {
-            println("cancel segment \(segmentIndex)")
+        if let operation: NSOperation = self.operations.objectForKey(segmentIndex) as? NSOperation {
+            operation.cancel()
         }
-        self.jobs[segmentIndex]?.shouldCancel = true
-        self.jobs[segmentIndex] = nil
     }
     
     func position(var thumbIndex: Int) -> (segmentIndex: Int, row: Int, column: Int) {
@@ -124,10 +140,10 @@ class PhotoSegmentController {
         return start..<end
     }
     
-    private func assets(#range: Range<Int>, job: JobToken) -> [PHAsset]? {
+    private func assets(#range: Range<Int>, operation: NSOperation) -> [PHAsset]? {
         var assets = [PHAsset]()
         for i in range {
-            if (job.shouldCancel) {
+            if (operation.cancelled) {
                 return nil
             }
 
@@ -136,11 +152,11 @@ class PhotoSegmentController {
         return assets
     }
     
-    private func loadImages(assets: [PHAsset], job: JobToken) -> [Int:UIImage]? {
+    private func loadImages(assets: [PHAsset], operation: NSOperation) -> [Int:UIImage]? {
         var images = [Int: UIImage]()
         
         for i in 0..<assets.count {
-            if (job.shouldCancel) {
+            if (operation.cancelled) {
                 return nil
             }
 
@@ -159,12 +175,12 @@ class PhotoSegmentController {
         return images;
     }
     
-    private func drawSegment(images: [Int: UIImage], job: JobToken) -> UIImage? {
+    private func drawSegment(images: [Int: UIImage], operation: NSOperation) -> UIImage? {
 
         UIGraphicsBeginImageContextWithOptions(self.segmentSize, false, 2.0)
         
         for i in images.keys {
-            if (job.shouldCancel) {
+            if (operation.cancelled) {
                 return nil
             }
 
