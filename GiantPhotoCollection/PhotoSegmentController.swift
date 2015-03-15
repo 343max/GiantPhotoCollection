@@ -37,7 +37,7 @@ class PhotoSegmentController {
     var jobs: [Int: JobToken] = [:]
 
     class func segmentSize(#viewWidth: CGFloat, thumbnailSize: CGSize) -> CGSize {
-        let rowCount = floor(150.0 / thumbnailSize.height)
+        let rowCount = min(floor(200.0 / thumbnailSize.height), 4)
         return CGSize(width: viewWidth, height: rowCount * thumbnailSize.height)
     }
 
