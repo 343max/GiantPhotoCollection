@@ -59,8 +59,10 @@ class PhotoSegmentController {
             let controller = self.controller!
             if let assets = controller.assets(range: controller.rangeForAssets(segmentIndex: self.segmentIndex), operation: self) {
                 if let images = controller.loadImages(assets, operation: self) {
-                    if let segmentImage = controller.drawSegment(images, operation: self) {
-                        self.image = segmentImage
+                    if let clippedImages = controller.clipImages(images, operation: self) {
+                        if let segmentImage = controller.drawSegment(clippedImages, operation: self) {
+                            self.image = segmentImage
+                        }
                     }
                 }
             }
@@ -174,11 +176,37 @@ class PhotoSegmentController {
         
         return images;
     }
+
+    private func clipImages(images: [Int: UIImage], operation: NSOperation) -> [Int: UIImage]? {
+        let contextScale = CGFloat(2.0)
+        var clippedImages: [Int: UIImage] = [:]
+
+        for i in images.keys {
+            if (operation.cancelled) {
+                return nil
+            }
+
+            UIGraphicsBeginImageContextWithOptions(self.thumbnailSize, true, 2.0)
+            let image = images[i]!
+            let scale = max(self.thumbnailSize.width / image.size.width, self.thumbnailSize.height / image.size.height)
+            let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+            let frame = CGRect(x: (self.thumbnailSize.width - size.width) / 2.0,
+                y: (self.thumbnailSize.height - size.height) / 2.0,
+                width: size.width,
+                height: size.height)
+            image.drawInRect(frame)
+
+            clippedImages[i] = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+        }
+
+        return clippedImages
+    }
     
     private func drawSegment(images: [Int: UIImage], operation: NSOperation) -> UIImage? {
 
         UIGraphicsBeginImageContextWithOptions(self.segmentSize, false, 2.0)
-        
+
         for i in images.keys {
             if (operation.cancelled) {
                 return nil
