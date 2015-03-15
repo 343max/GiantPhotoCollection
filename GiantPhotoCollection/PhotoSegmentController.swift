@@ -178,7 +178,6 @@ class PhotoSegmentController {
     }
 
     private func clipImages(images: [Int: UIImage], operation: NSOperation) -> [Int: UIImage]? {
-        let contextScale = CGFloat(2.0)
         var clippedImages: [Int: UIImage] = [:]
 
         for i in images.keys {
@@ -186,7 +185,7 @@ class PhotoSegmentController {
                 return nil
             }
 
-            UIGraphicsBeginImageContextWithOptions(self.thumbnailSize, true, 2.0)
+            UIGraphicsBeginImageContextWithOptions(self.thumbnailSize, true, self.scale)
             let image = images[i]!
             let scale = max(self.thumbnailSize.width / image.size.width, self.thumbnailSize.height / image.size.height)
             let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
@@ -205,7 +204,7 @@ class PhotoSegmentController {
     
     private func drawSegment(images: [Int: UIImage], operation: NSOperation) -> UIImage? {
 
-        UIGraphicsBeginImageContextWithOptions(self.segmentSize, false, 2.0)
+        UIGraphicsBeginImageContextWithOptions(self.segmentSize, false, self.scale)
 
         for i in images.keys {
             if (operation.cancelled) {
