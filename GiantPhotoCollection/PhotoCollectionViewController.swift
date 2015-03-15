@@ -27,7 +27,7 @@ enum ThumbScrollPosition {
     }
 }
 
-class PhotoCollectionViewController: UICollectionViewController {
+class PhotoCollectionViewController: UICollectionViewController, PhotoSemgentControllerDelegate {
     let fetchResult: PHFetchResult
     let flowLayout: UICollectionViewFlowLayout
     let photoCellReuseIdentifier = "PhotoCell"
@@ -77,6 +77,7 @@ class PhotoCollectionViewController: UICollectionViewController {
                                                           segmentSize: segmentSize,
                                                         thumbnailSize: thumbnailSize,
                                                                 scale: self.view.contentScaleFactor)
+        self.photoSegmentManager.delegate = self
 
         build(self.collectionView!) {
             $0.indicatorStyle = .White
@@ -94,6 +95,8 @@ class PhotoCollectionViewController: UICollectionViewController {
         }
     }
 
+// MARK: UICollectionViewControllerDelegate, UICollectionViewControllerDataSource
+
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -103,10 +106,30 @@ class PhotoCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let segmentIndex = indexPath.row
+        let image = self.photoSegmentManager.createSegmentImage(segmentIndex: segmentIndex)
+
         return build(collectionView.dequeueReusableCellWithReuseIdentifier(photoCellReuseIdentifier, forIndexPath: indexPath) as! AssetsCell) {
             $0.photoSegmenetManager = self.photoSegmentManager
-            $0.segmentIndex = indexPath.row
+            $0.segmentIndex = segmentIndex
             $0.didTapAction = TargetActionWrapper(target: self, action: PhotoCollectionViewController.didTapThumb)
+            $0.imageView.image = image
+        }
+    }
+
+// MARK: PhotoSemgentControllerDelegate
+
+    func photoSegmentController(photoSegmentController: PhotoSegmentController, didCreateImage: UIImage, forSegment: Int) {
+        let indexPath = NSIndexPath(forItem: forSegment, inSection: 0)
+
+        let collectionView = self.collectionView as UICollectionView!
+
+        if !contains(collectionView.indexPathsForVisibleItems() as! [NSIndexPath], indexPath) {
+            return
+        }
+
+        if let cell: AssetsCell = collectionView.cellForItemAtIndexPath(indexPath) as? AssetsCell {
+            cell.imageView.image = didCreateImage
         }
     }
 }

@@ -2,25 +2,16 @@
 import UIKit
 import Photos
 
+protocol PhotoSemgentControllerDelegate: NSObjectProtocol {
+    func photoSegmentController(photoSegmentController: PhotoSegmentController, didCreateImage: UIImage, forSegment: Int)
+}
+
 class PhotoSegmentController {
-    typealias CreatedSegmentImageCallback = (image: UIImage, index: Int) -> ()
-
     class JobToken {
-        typealias CreatedSegmentImageCallback = PhotoSegmentController.CreatedSegmentImageCallback
-
         var shouldCancel: Bool = false
-        var callbacks: [CreatedSegmentImageCallback] = []
-
-        func addCallback(callback: CreatedSegmentImageCallback) {
-            self.callbacks += [callback]
-        }
-
-        func executeCallbacks(#image: UIImage, index: Int) {
-            for callback in self.callbacks {
-                callback(image: image, index: index)
-            }
-        }
     }
+
+    weak var delegate: PhotoSemgentControllerDelegate?
     
     let fetchResult: PHFetchResult
     let segmentSize: CGSize
@@ -46,7 +37,7 @@ class PhotoSegmentController {
         self.segmentSize = segmentSize
         self.thumbnailSize = thumbnailSize
         self.scale = scale
-        self.queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
+        self.queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)
         self.imageManager = PHImageManager.defaultManager()
         self.cache = NSCache()
         
@@ -56,12 +47,9 @@ class PhotoSegmentController {
         self.segmentCount = Int(ceil(Double(self.fetchResult.count) / Double(self.thumbsPerSegment)))
     }
 
-    func createSegmentImage(#segmentIndex: Int, callback: CreatedSegmentImageCallback?) {
+    func createSegmentImage(#segmentIndex: Int) -> UIImage? {
         if let image: UIImage = self.cache.objectForKey(segmentIndex) as? UIImage {
-            if let callback = callback {
-                callback(image: image, index: segmentIndex)
-            }
-            return
+            return image
         }
 
         let jobToken: JobToken
@@ -72,23 +60,21 @@ class PhotoSegmentController {
             self.jobs[segmentIndex] = jobToken
         }
 
-        if let callback = callback {
-            jobToken.addCallback(callback)
-        }
-
         dispatch_async(self.queue) {
             if let assets = self.assets(range: self.rangeForAssets(segmentIndex: segmentIndex), job: jobToken) {
                 if let images = self.loadImages(assets, job: jobToken) {
                     if let segmentImage = self.drawSegment(images, job: jobToken) {
                         self.cache.setObject(segmentImage, forKey: segmentIndex)
                         dispatch_async(dispatch_get_main_queue()) {
-                            jobToken.executeCallbacks(image: segmentImage, index: segmentIndex)
+                            self.delegate?.photoSegmentController(self, didCreateImage: segmentImage, forSegment: segmentIndex)
                         }
                     }
                 }
             }
             self.jobs[segmentIndex] = nil
         }
+
+        return nil
     }
 
     func cancelSegmentImage(#segmentIndex: Int) {

@@ -12,27 +12,8 @@ import Photos
 class AssetsCell: UICollectionViewCell {
     let imageView: UIImageView
     var gestureRecognizer: UITapGestureRecognizer?
-    var photoSegmenetManager: PhotoSegmentController?
-    var segmentIndex: Int? {
-        willSet(newValue) {
-            if let oldSegmentIndex = self.segmentIndex {
-                self.photoSegmenetManager!.cancelSegmentImage(segmentIndex: oldSegmentIndex)
-            }
-        }
-        didSet {
-            if let segmentIndex = self.segmentIndex {
-                self.photoSegmenetManager!.createSegmentImage(segmentIndex: segmentIndex,
-                    callback: { (image, index) in
-                        if (index != self.segmentIndex) {
-                            return
-                        }
-
-                        self.imageView.image = image
-                })
-            }
-        }
-    }
-    
+    weak var photoSegmenetManager: PhotoSegmentController?
+    var segmentIndex: Int?
     var didTapAction: TargetAction?
     
     required convenience init(coder aDecoder: NSCoder) {
